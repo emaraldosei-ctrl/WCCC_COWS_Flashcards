@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Critical Care Clinical Flash Cards – QE Birmingham / Midlands Networks</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f0f4f5; font-family: Arial, sans-serif; color: #212b32; min-height: 100vh; }
+  .nhs-header { background: #003087; padding: 14px 20px 18px; margin-bottom: 26px; }
+  .nhs-header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 16px; }
+  .nhs-logo-box { background: white; border-radius: 4px; padding: 5px 9px; flex-shrink: 0; }
+  .nhs-logo-box span { color: #003087; font-size: 20px; font-weight: 900; font-family: 'Arial Black', Arial, sans-serif; line-height: 1; display: block; }
+  .nhs-org-name { color: #41B6E6; font-size: 12px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 1px; text-transform: uppercase; }
+  .nhs-dept { color: #b3c6e0; font-size: 11px; margin-bottom: 3px; }
+  .nhs-title { color: white; font-size: 19px; font-weight: bold; }
+  .nhs-tagline { color: #b3c6e0; font-size: 11px; margin-top: 2px; }
+  .page { padding: 0 20px 50px; }
+  .search-wrap { max-width: 660px; margin: 0 auto 24px; position: relative; }
+  .search-wrap input { width: 100%; padding: 13px 48px 13px 16px; border: 2px solid #aeb7bd; border-radius: 4px; font-size: 16px; font-family: Arial, sans-serif; color: #212b32; background: white; outline: none; transition: border-color 0.2s; }
+  .search-wrap input:focus { border-color: #0072CE; box-shadow: 0 0 0 3px #0072CE22; }
+  .search-wrap input::placeholder { color: #768692; }
+  .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #768692; font-size: 22px; cursor: pointer; line-height: 1; padding: 2px 5px; display: none; transition: color 0.15s; }
+  .clear-btn:hover { color: #212b32; }
+  #search-results { max-width: 760px; margin: 0 auto; display: none; }
+  .results-hdr { font-size: 14px; color: #425563; margin-bottom: 12px; padding-left: 2px; }
+  .results-hdr strong { color: #003087; }
+  .result-item { background: white; border: 1px solid #d8dde0; border-left: 4px solid #003087; border-radius: 4px; padding: 14px 16px; margin-bottom: 9px; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
+  .result-item:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.12); transform: translateX(4px); }
+  .result-cat { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
+  .result-q { font-size: 15px; color: #212b32; line-height: 1.4; margin-bottom: 4px; font-weight: bold; }
+  .result-a { font-size: 13px; color: #425563; }
+  .result-item mark { background: #FFB81C55; color: #5c3700; border-radius: 2px; padding: 0 2px; font-style: normal; }
+  .no-results { text-align: center; padding: 44px 20px; color: #425563; font-size: 15px; }
+  .no-results .icon { font-size: 42px; margin-bottom: 12px; }
+  #cat-view { max-width: 760px; margin: 0 auto; }
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .section-lbl { font-size: 12px; color: #425563; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
+  .doc-divider { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color: white; background: #003087; padding: 6px 14px; border-radius: 4px; margin: 18px 0 10px; }
+  .card-count-badge { display: inline-block; background: #003087; color: white; border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: bold; }
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+  .cat-btn { border: none; border-radius: 4px; padding: 18px 16px; text-align: left; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.18); }
+  .cat-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.22); }
+  .cat-count { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 7px; color: rgba(255,255,255,0.7); }
+  .cat-name { font-size: 13px; font-weight: bold; line-height: 1.35; margin-bottom: 12px; color: white; }
+  .cpb { background: rgba(255,255,255,0.25); border-radius: 3px; height: 4px; }
+  .cpf { border-radius: 3px; height: 4px; background: rgba(255,255,255,0.85); transition: width 0.4s; }
+  .cpt { color: rgba(255,255,255,0.6); font-size: 11px; margin-top: 5px; }
+  #card-view { max-width: 660px; margin: 0 auto; display: none; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .topbar button { background: white; color: #003087; border: 2px solid #003087; border-radius: 4px; padding: 7px 16px; font-size: 14px; font-weight: bold; cursor: pointer; font-family: Arial, sans-serif; transition: all 0.15s; }
+  .topbar button:hover { background: #003087; color: white; }
+  .topbar .counter { font-weight: bold; font-size: 15px; color: #212b32; }
+  .srch-banner { background: #e8f4fd; border: 1px solid #41B6E6; border-radius: 4px; padding: 10px 16px; margin-bottom: 14px; font-size: 13px; color: #003087; display: none; align-items: center; justify-content: space-between; gap: 10px; }
+  .srch-banner button { background: none; border: none; color: #0072CE; font-size: 13px; cursor: pointer; text-decoration: underline; white-space: nowrap; padding: 0; }
+  .cat-badge { text-align: center; margin-bottom: 12px; }
+  .cat-badge span { display: inline-block; padding: 5px 18px; border-radius: 4px; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: bold; color: white; }
+  .ps-bg { background: #d8dde0; border-radius: 3px; height: 5px; margin-bottom: 18px; }
+  .ps-fill { border-radius: 3px; height: 5px; transition: width 0.35s; }
+  .flashcard { background: white; border-radius: 4px; border: 1px solid #d8dde0; border-left: 6px solid #003087; padding: 28px 26px 24px; min-height: 210px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.07); transition: box-shadow 0.25s, background 0.25s; display: flex; flex-direction: column; justify-content: flex-start; position: relative; }
+  .flashcard:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.12); }
+  .flashcard.flipped { background: #f8fafb; }
+  .card-state { font-size: 11px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; color: #768692; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .state-dot { width: 8px; height: 8px; border-radius: 50%; background: #d8dde0; display: inline-block; flex-shrink: 0; }
+  .flashcard.flipped .card-state { color: #003087; }
+  .flashcard.flipped .state-dot { background: #003087; }
+  .done-badge { display: none; position: absolute; top: 14px; right: 16px; border-radius: 3px; padding: 3px 10px; font-size: 11px; font-weight: bold; letter-spacing: 1px; color: white; background: #009639; }
+  .flashcard.is-done .done-badge { display: block; }
+  .card-question { font-size: 18px; line-height: 1.55; font-weight: bold; color: #212b32; }
+  .tap-hint { font-size: 13px; color: #aeb7bd; margin-top: 18px; font-style: italic; }
+  .card-answer { font-size: 15px; line-height: 1.8; color: #212b32; white-space: pre-line; }
+  .diagram-wrap { margin-top: 16px; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes slideIn { from { opacity:0; } to { opacity:1; } }
+  .flip-anim { animation: slideIn 0.2s ease; }
+  .cat-btn, .result-item { animation: fadeIn 0.25s ease; }
+  #card-view { animation: fadeIn 0.25s ease; }
+  .controls { display: flex; gap: 10px; margin-top: 16px; justify-content: center; flex-wrap: wrap; }
+  .controls button { border-radius: 4px; padding: 11px 26px; font-size: 15px; font-weight: bold; cursor: pointer; font-family: Arial, sans-serif; transition: all 0.15s; border: 2px solid transparent; }
+  .controls button:hover:not(:disabled) { filter: brightness(0.88); }
+  .controls button:disabled { opacity: 0.38; cursor: not-allowed; }
+  .btn-nav { background: white; color: #003087; border-color: #003087; }
+  .btn-nav:hover:not(:disabled) { background: #003087 !important; color: white !important; filter: none !important; }
+  .btn-mark { color: white; border-color: transparent; }
+  .btn-mark.already { background: #d8dde0 !important; color: #425563 !important; border-color: #d8dde0 !important; }
+  .summary-strip { text-align: center; margin-top: 14px; color: #425563; font-size: 14px; }
+  .all-done { font-weight: bold; margin-left: 6px; }
+  .nhs-footer { max-width: 760px; margin: 30px auto 0; padding: 14px 0; border-top: 2px solid #d8dde0; text-align: center; font-size: 12px; color: #768692; }
+</style>
+</head>
+<body>
+<div class="nhs-header">
+  <div class="nhs-header-inner">
+    <div class="nhs-logo-box"><span>NHS</span></div>
+    <div>
+      <div class="nhs-org-name">Queen Elizabeth Hospital Birmingham</div>
+      <div class="nhs-dept">Critical Care Area C</div>
+      <div class="nhs-title">Clinical Flash Cards</div>
+      <div class="nhs-tagline">Search any keyword &nbsp;·&nbsp; browse all 15 categories</div>
+    </div>
+  </div>
+</div>
+<div class="page">
+<div class="search-wrap">
+  <input type="text" id="search-input" placeholder="🔍  Search — e.g. vancomycin, ICP, EVD, autonomic dysreflexia, ASIA, log roll, SCIC ..." oninput="handleSearch()" onkeydown="if(event.key==='Escape')clearSearch()">
+  <button class="clear-btn" id="clear-btn" onclick="clearSearch()">&#215;</button>
+</div>
+<div id="search-results">
+  <div class="results-hdr" id="results-hdr"></div>
+  <div id="results-list"></div>
+</div>
+<div id="cat-view">
+  <div class="section-hdr">
+    <div class="section-lbl">Browse by category</div>
+    <div class="card-count-badge" id="total-badge"></div>
+  </div>
+  <div id="cat-grid-wrapper"></div>
+</div>
+<div id="card-view">
+  <div class="topbar">
+    <button onclick="goBack()">&#8592; Back</button>
+    <span class="counter" id="counter"></span>
+    <button onclick="resetCategory()">Reset</button>
+  </div>
+  <div class="srch-banner" id="srch-banner">
+    <span id="banner-txt"></span>
+    <button onclick="goBackToSearch()">&#8592; Back to results</button>
+  </div>
+  <div class="cat-badge"><span id="cat-badge-txt"></span></div>
+  <div class="ps-bg"><div class="ps-fill" id="ps-fill"></div></div>
+  <div class="flashcard" id="flashcard" onclick="flipCard()">
+    <div class="card-state"><span class="state-dot"></span><span id="card-state-lbl">QUESTION</span></div>
+    <div class="done-badge">&#10003; Done</div>
+    <div id="card-content"></div>
+  </div>
+  <div class="controls">
+    <button class="btn-nav" id="btn-prev" onclick="prevCard()">&#8592; Prev</button>
+    <button class="btn-mark" id="btn-mark" onclick="markDone()">Mark Done</button>
+    <button class="btn-nav" id="btn-next" onclick="nextCard()">Next &#8594;</button>
+  </div>
+  <div class="summary-strip" id="summary-strip"></div>
+</div>
+<div class="nhs-footer">University Hospitals Birmingham NHS Foundation Trust &nbsp;·&nbsp; Midlands Critical Care &amp; Trauma Networks &nbsp;·&nbsp; For guidance only — always refer to current trust policies</div>
+</div>
+<script>
+// ═══════════════════════════════════════════
+//  SVG DIAGRAMS
+// ═══════════════════════════════════════════
+var DIAGRAMS={
+bloodCompat:(function(){var m=[[1,0,0,0,0,0,0,0],[1,1,0,0,0,0,0,0],[1,0,1,0,0,0,0,0],[1,1,1,1,0,0,0,0],[1,0,0,0,1,0,0,0],[1,1,0,0,1,1,0,0],[1,0,1,0,1,0,1,0],[1,1,1,1,1,1,1,1]];var lbl=['O-','O+','A-','A+','B-','B+','AB-','AB+'];var LW=58,CW=56,RH=24,hH=28,sH=26,TW=LW+8*CW,TH=hH+sH+8*RH;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="'+hH+'" fill="#003087"/>';s+='<text x="'+Math.round(TW/2)+'" y="19" text-anchor="middle" fill="white" font-size="11" font-weight="bold">BLOOD TRANSFUSION COMPATIBILITY &#8212; DONOR &#8594;</text>';s+='<rect y="'+hH+'" width="'+TW+'" height="'+sH+'" fill="#0072CE"/>';s+='<text x="'+Math.round(LW/2)+'" y="'+(hH+17)+'" text-anchor="middle" fill="white" font-size="9">Recipient &#8595;</text>';lbl.forEach(function(d,i){s+='<text x="'+(LW+i*CW+Math.round(CW/2))+'" y="'+(hH+17)+'" text-anchor="middle" fill="white" font-size="10" font-weight="bold">'+d+'</text>';});m.forEach(function(row,ri){var y=hH+sH+ri*RH;s+='<rect y="'+y+'" width="'+TW+'" height="'+RH+'" fill="'+(ri%2===0?'#f0f4f5':'#fff')+'"/>';s+='<rect y="'+y+'" width="'+LW+'" height="'+RH+'" fill="'+(ri%2===0?'#e2eaf5':'#eaf0fa')+'"/>';s+='<text x="'+Math.round(LW/2)+'" y="'+(y+RH-7)+'" text-anchor="middle" fill="#003087" font-size="10" font-weight="bold">'+lbl[ri]+'</text>';row.forEach(function(v,ci){s+='<text x="'+(LW+ci*CW+Math.round(CW/2))+'" y="'+(y+RH-7)+'" text-anchor="middle" fill="'+(v?'#007a3d':'#DA291C')+'" font-size="14" font-weight="bold">'+(v?'&#10003;':'&#10007;')+'</text>';});});for(var i=0;i<=8;i++){s+='<line x1="'+(LW+i*CW)+'" y1="'+(hH+sH)+'" x2="'+(LW+i*CW)+'" y2="'+TH+'" stroke="#d8dde0" stroke-width="0.5"/>';}for(var i=0;i<=8;i++){s+='<line x1="0" y1="'+(hH+sH+i*RH)+'" x2="'+TW+'" y2="'+(hH+sH+i*RH)+'" stroke="#d8dde0" stroke-width="0.5"/>';}s+='<line x1="'+LW+'" y1="'+hH+'" x2="'+LW+'" y2="'+TH+'" stroke="#d8dde0" stroke-width="1"/></svg>';return s;}()),
+tubeRef:(function(){var tubes=[{lbl:'Red Top',c:'#CC2222',use:'Biochemistry\nSerology\nImmunology'},{lbl:'Purple Top\n(EDTA)',c:'#7B0EA8',use:'Haematology\nSome Biochem'},{lbl:'Ochre Top\n(= Yellow)',c:'#B8860B',use:'Biochemistry\n(TFT, Troponin\nOsmolality)'},{lbl:'Grey Top',c:'#808080',use:'Biochemistry\n(Alcoholic\nScreening)'},{lbl:'Blue Top',c:'#1155CC',use:'Haematology\n(Coagulation\nDIC)'},{lbl:'Ochre+\nRed Top',c:'#B8860B',use:'Biochemistry\n(Synacthen:\n30min pre+post)'}];var N=6,CW=84,TH=180,TW=N*CW;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="26" fill="#003087"/>';s+='<text x="'+(TW/2)+'" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">BLOOD TUBE QUICK REFERENCE</text>';tubes.forEach(function(t,i){var x=i*CW,cx=x+CW/2;s+='<rect x="'+(x+18)+'" y="36" width="'+(CW-36)+'" height="70" fill="'+t.c+'" rx="4"/>';s+='<rect x="'+(x+18)+'" y="36" width="'+(CW-36)+'" height="18" fill="white" fill-opacity="0.3" rx="4"/>';var lblLines=t.lbl.split('\n');lblLines.forEach(function(l,li){s+='<text x="'+cx+'" y="'+(115+li*13)+'" text-anchor="middle" fill="#212b32" font-size="10" font-weight="bold">'+l+'</text>';});var useLines=t.use.split('\n');useLines.forEach(function(l,li){s+='<text x="'+cx+'" y="'+(147+li*11)+'" text-anchor="middle" fill="#425563" font-size="9">'+l+'</text>';});});s+='</svg>';return s;}()),
+fio2peep:(function(){var d=[{f:'0.21',p:'5',c:'#D0E8F8'},{f:'0.3',p:'5',c:'#D0E8F8'},{f:'0.4',p:'8',c:'#41B6E6'},{f:'0.5',p:'8',c:'#41B6E6'},{f:'0.6',p:'10',c:'#0072CE'},{f:'0.7',p:'12',c:'#005EB8'},{f:'0.8',p:'12',c:'#003087'},{f:'0.9',p:'12',c:'#003087'},{f:'1.0',p:'12*',c:'#DA291C'}];var N=9,CW=56,TW=N*CW,TH=130;var s='<svg viewBox="0 0 504 '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="504" height="'+TH+'" fill="white"/>';s+='<rect width="504" height="26" fill="#003087"/>';s+='<text x="252" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">FiO&#8322; : PEEP ESCALATION TABLE</text>';s+='<rect y="26" width="504" height="26" fill="#f0f4f5"/>';d.forEach(function(item,i){s+='<text x="'+(i*CW+CW/2)+'" y="43" text-anchor="middle" fill="#212b32" font-size="11" font-weight="bold">'+item.f+'</text>';});d.forEach(function(item,i){var x=i*CW+3;var tc=(item.c==='#D0E8F8')?'#003087':'white';s+='<rect x="'+x+'" y="56" width="'+(CW-6)+'" height="38" fill="'+item.c+'" rx="3"/>';s+='<text x="'+(i*CW+CW/2)+'" y="71" text-anchor="middle" fill="'+tc+'" font-size="9">PEEP</text>';s+='<text x="'+(i*CW+CW/2)+'" y="87" text-anchor="middle" fill="'+tc+'" font-size="14" font-weight="bold">'+item.p+'</text>';});s+='<line x1="0" y1="52" x2="504" y2="52" stroke="#d8dde0" stroke-width="1"/><line x1="0" y1="96" x2="504" y2="96" stroke="#d8dde0" stroke-width="1"/>';d.forEach(function(_,i){s+='<line x1="'+(i*CW)+'" y1="26" x2="'+(i*CW)+'" y2="'+TH+'" stroke="#d8dde0" stroke-width="0.5"/>';});s+='<text x="252" y="115" text-anchor="middle" fill="#DA291C" font-size="11" font-weight="bold">* FiO&#8322; &#8805; 0.8 requires Medical Review</text></svg>';return s;}()),
+vancoLevels:(function(){var rows=[{lvl:'&lt; 15 mg/L',action:'Increase daily dose by 500 mg',rate:'Increase to next rate level',c:'#e8f4ea',bc:'#009639'},{lvl:'15&#8211;25 mg/L',action:'No change required',rate:'&#8212;',c:'#e8f4fd',bc:'#41B6E6'},{lvl:'&gt; 25 mg/L',action:'Decrease daily dose by 500 mg',rate:'Decrease to next rate level',c:'#fff3e0',bc:'#ED8B00'},{lvl:'&gt; 30 mg/L',action:'STOP infusion for 6 hours',rate:'Restart at reduced dose (ward round)',c:'#fde8e8',bc:'#DA291C'}];var TW=504,RH=50,TH=28+rows.length*RH+14;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="28" fill="#003087"/>';s+='<text x="252" y="19" text-anchor="middle" fill="white" font-size="11" font-weight="bold">VANCOMYCIN LEVEL &#8212; DOSE ADJUSTMENT</text>';rows.forEach(function(r,i){var y=28+i*RH;s+='<rect y="'+y+'" width="'+TW+'" height="'+RH+'" fill="'+r.c+'"/>';if(i>0)s+='<line x1="8" y1="'+y+'" x2="'+(TW-8)+'" y2="'+y+'" stroke="#d8dde0" stroke-width="1"/>';s+='<rect x="8" y="'+(y+8)+'" width="8" height="'+Math.round(RH-16)+'" fill="'+r.bc+'" rx="2"/>';s+='<text x="24" y="'+(y+20)+'" fill="#212b32" font-size="12" font-weight="bold">'+r.lvl+'</text>';s+='<text x="24" y="'+(y+33)+'" fill="#425563" font-size="11">'+r.action+'</text>';s+='<text x="24" y="'+(y+46)+'" fill="#768692" font-size="10">Rate: '+r.rate+'</text>';});s+='<text x="252" y="'+(TH-2)+'" text-anchor="middle" fill="#768692" font-size="10">Daily levels at 06:00 &#8212; omit only if infusion running &lt;6 hours</text></svg>';return s;}()),
+icpSteps:(function(){var steps=[{n:'1',title:'Positioning, Sedation &amp; Ventilation',detail:'30-45&#176; head up &#183; CPP >60 &#183; PaCO&#8322; 4.5-5.0 kPa &#183; Propofol + Morphine/Alfentanil &#183; Temp &lt;37.5&#176;C',c:'#D0E8F8',tc:'#003087',bc:'#41B6E6'},{n:'2',title:'CSF Drainage &amp; Imaging',detail:'Drain via EVD or lumbar drain &#183; Evacuate significant SOLs &#183; CT head if not up to date',c:'#cce5d6',tc:'#007a3d',bc:'#009639'},{n:'3',title:'Osmotherapy &amp; CPP Optimisation',detail:'3% NaCl 3-5 ml/kg &#183; 20% Mannitol 2 ml/kg x3 &#183; Trial CPP >70 &#183; Escalate antiepileptics if seizures',c:'#fff3cc',tc:'#7a4500',bc:'#ED8B00'},{n:'4',title:'Barbiturate Coma / Surgery',detail:'Consultant decision only &#183; Thiopentone boluses &#8594; infusion 3-8 mg/kg/hr &#183; EEG burst suppression >3:1 &#183; Consider craniectomy',c:'#fde0e0',tc:'#8b0000',bc:'#DA291C'}];var TW=504,stepH=68,TH=28+steps.length*stepH+8;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="28" fill="#003087"/>';s+='<text x="252" y="19" text-anchor="middle" fill="white" font-size="11" font-weight="bold">ICP MANAGEMENT ESCALATION STEPS (Target ICP &lt;20 mmHg)</text>';steps.forEach(function(st,i){var y=28+i*stepH;s+='<rect y="'+y+'" width="'+TW+'" height="'+stepH+'" fill="'+st.c+'"/>';if(i>0)s+='<line x1="0" y1="'+y+'" x2="'+TW+'" y2="'+y+'" stroke="#d8dde0" stroke-width="1"/>';s+='<rect x="0" y="'+y+'" width="34" height="'+stepH+'" fill="'+st.bc+'"/>';s+='<text x="17" y="'+(y+stepH/2-7)+'" text-anchor="middle" fill="white" font-size="9" font-weight="bold">STEP</text>';s+='<text x="17" y="'+(y+stepH/2+10)+'" text-anchor="middle" fill="white" font-size="18" font-weight="bold">'+st.n+'</text>';s+='<text x="44" y="'+(y+18)+'" fill="'+st.tc+'" font-size="12" font-weight="bold">'+st.title+'</text>';var words=st.detail.split(' &#183; ');var mid=Math.ceil(words.length/2);s+='<text x="44" y="'+(y+33)+'" fill="#425563" font-size="10">'+words.slice(0,mid).join(' &#183; ')+'</text>';s+='<text x="44" y="'+(y+46)+'" fill="#425563" font-size="10">'+words.slice(mid).join(' &#183; ')+'</text>';});s+='</svg>';return s;}()),
+proneCriteria:(function(){var items=[{txt:'FiO&#8322; &#8805; 0.6',sub:'Despite optimised ventilation',c:'#fde0e0',ic:'#DA291C'},{txt:'PaO&#8322; &#8804; 8.0 kPa',sub:'Persistent hypoxia',c:'#fde0e0',ic:'#DA291C'},{txt:'PEEP &gt; 5 cmH&#8322;O',sub:'Elevated PEEP requirement',c:'#fff3e0',ic:'#ED8B00'},{txt:'Peak Airway P &gt; 30 cmH&#8322;O',sub:'High airway pressures',c:'#fff3e0',ic:'#ED8B00'},{txt:'Bilateral CXR Infiltrates',sub:'Consistent with ARDS',c:'#fde0e0',ic:'#DA291C'}];var TW=504,IH=46,TH=28+items.length*IH+28;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="28" fill="#003087"/>';s+='<text x="252" y="19" text-anchor="middle" fill="white" font-size="11" font-weight="bold">INDICATIONS FOR PRONE VENTILATION &#8212; All 5 must be present</text>';items.forEach(function(it,i){var y=28+i*IH;s+='<rect y="'+y+'" width="'+TW+'" height="'+IH+'" fill="'+it.c+'"/>';if(i>0)s+='<line x1="8" y1="'+y+'" x2="'+(TW-8)+'" y2="'+y+'" stroke="#d8dde0" stroke-width="0.5"/>';s+='<circle cx="26" cy="'+(y+IH/2)+'" r="13" fill="'+it.ic+'"/>';s+='<text x="26" y="'+(y+IH/2+5)+'" text-anchor="middle" fill="white" font-size="13" font-weight="bold">'+(i+1)+'</text>';s+='<text x="48" y="'+(y+18)+'" fill="#212b32" font-size="13" font-weight="bold">'+it.txt+'</text>';s+='<text x="48" y="'+(y+33)+'" fill="#425563" font-size="11">'+it.sub+'</text>';});s+='<text x="252" y="'+(TH-9)+'" text-anchor="middle" fill="#003087" font-size="11" font-weight="bold">&#8594; Target: 16 hours prone, 8 hours supine. Minimum 5 staff required.</text></svg>';return s;}()),
+evdRef:(function(){var s='<svg viewBox="0 0 504 175" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="504" height="175" fill="white"/>';s+='<rect width="504" height="26" fill="#007a3d"/>';s+='<text x="252" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">EVD ZERO REFERENCE POINT</text>';s+='<ellipse cx="140" cy="108" rx="54" ry="60" fill="#f5e6d3" stroke="#aeb7bd" stroke-width="1.5"/>';s+='<ellipse cx="140" cy="80" rx="46" ry="40" fill="#f5e6d3" stroke="#aeb7bd" stroke-width="1.5"/>';s+='<ellipse cx="186" cy="103" rx="10" ry="15" fill="#f5e6d3" stroke="#aeb7bd" stroke-width="1.5"/>';s+='<ellipse cx="186" cy="103" rx="5" ry="8" fill="#e0cbb8" stroke="#aeb7bd" stroke-width="1"/>';s+='<circle cx="181" cy="106" r="4" fill="#DA291C"/>';s+='<line x1="181" y1="106" x2="258" y2="106" stroke="#DA291C" stroke-width="1.5" stroke-dasharray="4,3"/>';s+='<rect x="258" y="94" width="158" height="24" fill="#fde8e8" rx="3" stroke="#DA291C" stroke-width="1"/>';s+='<text x="337" y="110" text-anchor="middle" fill="#DA291C" font-size="11" font-weight="bold">ZERO POINT: TRAGUS (EAM)</text>';s+='<text x="140" y="160" text-anchor="middle" fill="#003087" font-size="11" font-weight="bold">Patient Supine &#8212; External Auditory Meatus</text>';s+='<rect x="258" y="128" width="240" height="34" fill="#e8f4fd" rx="3" stroke="#41B6E6" stroke-width="1"/>';s+='<text x="378" y="142" text-anchor="middle" fill="#003087" font-size="10" font-weight="bold">If patient on side:</text>';s+='<text x="378" y="156" text-anchor="middle" fill="#003087" font-size="10">Use bridge of nose as reference</text></svg>';return s;}()),
+obsFreq:(function(){var rows=[{p:'Craniotomy (SOL: haematoma / tumour)',f:'&#189; hrly &#215;4h &#8594; 1 hrly &#215;4h &#8594; 2 hrly &#215;4h',c:'#fde8e8',bc:'#DA291C'},{p:'Aneurysm / Post. Fossa / Coiling / Craniectomy',f:'&#189; hrly &#215;6h &#8594; 1 hrly &#215;6h &#8594; 2 hrly &#215;6h',c:'#fde8e8',bc:'#DA291C'},{p:"Subarachnoid Haemorrhage (pre-op)",f:'&#189; hrly &#215;4h &#8594; 1 hrly &#215;4h &#8594; 2 hrly as condition dictates',c:'#fff3e0',bc:'#ED8B00'},{p:"'Cold' Angiography",f:'&#189; hrly &#215;2h &#8594; 1 hrly &#215;4h',c:'#e8f4fd',bc:'#0072CE'},{p:'Post-bleed Angiography',f:'&#189; hrly &#215;4h &#8594; 1 hrly &#215;4h',c:'#e8f4fd',bc:'#0072CE'},{p:'Lumbar / Thoracic Spinal Surgery',f:'&#189; hrly &#215;4h &#8594; 1 hrly &#215;4h',c:'#e8f4ea',bc:'#009639'}];var TW=504,RH=44,TH=28+rows.length*RH+14;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="28" fill="#7c2d12"/>';s+='<text x="252" y="19" text-anchor="middle" fill="white" font-size="11" font-weight="bold">OBSERVATION FREQUENCY QUICK REFERENCE</text>';rows.forEach(function(r,i){var y=28+i*RH;s+='<rect y="'+y+'" width="'+TW+'" height="'+RH+'" fill="'+r.c+'"/>';if(i>0)s+='<line x1="0" y1="'+y+'" x2="'+TW+'" y2="'+y+'" stroke="#d8dde0" stroke-width="0.5"/>';s+='<rect x="0" y="'+y+'" width="4" height="'+RH+'" fill="'+r.bc+'"/>';s+='<text x="12" y="'+(y+17)+'" fill="#212b32" font-size="11" font-weight="bold">'+r.p+'</text>';s+='<text x="12" y="'+(y+32)+'" fill="#425563" font-size="10">&#10148; '+r.f+'</text>';});s+='<text x="252" y="'+(TH-2)+'" text-anchor="middle" fill="#DA291C" font-size="10" font-weight="bold">Never change obs frequency without consulting the Nurse in Charge</text></svg>';return s;}()),
+abxInfusion:(function(){var TW=504,TH=160;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="26" fill="#005073"/>';s+='<text x="252" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">STANDARD vs EXTENDED INFUSION</text>';s+='<text x="12" y="46" fill="#425563" font-size="11" font-weight="bold">Standard (30 min):</text>';s+='<rect x="130" y="34" width="60" height="22" fill="#DA291C" rx="3"/>';s+='<text x="160" y="49" text-anchor="middle" fill="white" font-size="9" font-weight="bold">30 min</text>';s+='<line x1="190" y1="45" x2="496" y2="45" stroke="#d8dde0" stroke-width="2" stroke-dasharray="4,3"/>';s+='<text x="12" y="82" fill="#425563" font-size="11" font-weight="bold">Extended (3&#8211;4 hrs):</text>';s+='<rect x="130" y="68" width="364" height="22" fill="#009639" rx="3"/>';s+='<text x="312" y="83" text-anchor="middle" fill="white" font-size="10" font-weight="bold">3&#8211;4 hours (better AUC)</text>';s+='<text x="252" y="112" text-anchor="middle" fill="#212b32" font-size="11" font-weight="bold">Pip/Taz maintenance: 50ml over 4 hrs at 12.5 ml/hr</text>';s+='<text x="252" y="126" text-anchor="middle" fill="#212b32" font-size="11" font-weight="bold">Meropenem maintenance: 50ml over 3 hrs at 16.7 ml/hr</text>';s+='<rect x="8" y="135" width="488" height="20" fill="#e8f4ed" rx="3"/>';s+='<text x="252" y="148" text-anchor="middle" fill="#007a3d" font-size="10">Flush 50ml volumes with 5ml NaCl 0.9%. 100ml bags: flush with 20&#8211;25ml NaCl 0.9%</text>';s+='</svg>';return s;}()),
+hfoDiagram:(function(){var items=[{n:'1',lbl:'Bias Flow',val:'25&#8211;30 LPM',note:'O&#8322; flow + CO&#8322; removal. Range 0&#8211;60 LPM.',c:'#D0E8F8',tc:'#003087'},{n:'2',lbl:'Mean Pressure (Paw)',val:'+5 from prev vent',note:'Oscillator measures from Carina. ADD 5 to previous ventilator MAP.',c:'#cce5d6',tc:'#007a3d'},{n:'3',lbl:'Power / Delta P',val:'~4',note:'Drives piston. Increasing Delta P increases MAP and circuit pressure.',c:'#fff3cc',tc:'#7a4500'},{n:'4',lbl:'% Inspiratory Time',val:'33% (or 50%)',note:'33% = I:E 1:2 (standard). 50% = I:E 1:1 (reduces CO&#8322;).',c:'#f0e8f8',tc:'#5a0080'},{n:'5',lbl:'Frequency (Hz)',val:'5 Hz = 300 bpm',note:'Range 3&#8211;15 Hz. Reduce in 0.5 steps to decrease CO&#8322;.',c:'#e8f4fd',tc:'#003087'},{n:'6',lbl:'Temp / Water Trap',val:'~36.5&#176;C',note:'Check water trap hourly. Never let level drop below bottom ridge.',c:'#fde8e8',tc:'#8b0000'}];var TW=504,IH=52,TH=26+items.length*IH+8;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="26" fill="#2C2C6E"/>';s+='<text x="252" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">HFO KEY CONTROLS OVERVIEW</text>';items.forEach(function(it,i){var y=26+i*IH;s+='<rect y="'+y+'" width="'+TW+'" height="'+IH+'" fill="'+it.c+'"/>';if(i>0)s+='<line x1="0" y1="'+y+'" x2="'+TW+'" y2="'+y+'" stroke="#d8dde0" stroke-width="0.5"/>';s+='<circle cx="22" cy="'+(y+IH/2)+'" r="14" fill="'+it.tc+'"/>';s+='<text x="22" y="'+(y+IH/2+5)+'" text-anchor="middle" fill="white" font-size="12" font-weight="bold">'+it.n+'</text>';s+='<text x="44" y="'+(y+17)+'" fill="'+it.tc+'" font-size="12" font-weight="bold">'+it.lbl+'</text>';s+='<text x="44" y="'+(y+30)+'" fill="#212b32" font-size="11">Typical: '+it.val+'</text>';s+='<text x="44" y="'+(y+43)+'" fill="#425563" font-size="10">'+it.note+'</text>';});s+='</svg>';return s;}()),
+// SCI DIAGRAMS
+spinalMnemonic:(function(){var rows=[{l:'S',c:'STABILITY',d:'Vertebral: Spinal Clearance, Log Roll, Collar | CVS: Bradycardia, Hypotension | Respiratory: RR, Abdominal breathing, Weak cough',bg:'#E3F2FD',lc:'#003087'},{l:'P',c:'PROTECTION',d:'Stability &#183; Positioning &#183; Skin &#183; Collar? &#183; Anticoagulation &#183; TEDS',bg:'#F3E5F5',lc:'#7B1FA2'},{l:'I',c:'INSUFFICIENCY',d:'CVS? &#183; Respiratory? &#183; Cough? &#183; Bladder/Bowel?',bg:'#FFF3E0',lc:'#BF5000'},{l:'N',c:'NUTRITION',d:'NBM 48 hours &#183; Bowel Sounds? &#183; Dietician referral within 72hrs',bg:'#E8F5E9',lc:'#1B5E20'},{l:'A',c:'ASSESSMENT',d:'Neurology &#8212; ASIA assessment &#183; Respiratory pattern, effort, cough, fatigue &#183; CVS &#183; Other injuries',bg:'#FFFDE7',lc:'#796500'},{l:'L',c:'LOCATION',d:'ITU/HDU &#183; Observation bed &#183; Speciality ward &#183; SCI unit referral &#183; National SCI Database',bg:'#E3F2FD',lc:'#003087'},{l:'C',c:'CARDIOVASCULAR',d:'Heart Rate &#183; Blood Pressure (MAP) &#183; Temperature &#183; Autonomic Dysreflexia',bg:'#FFEBEE',lc:'#B71C1C'},{l:'O',c:'OBSERVATIONS',d:'Neurological &#183; Cardiovascular &#183; Respiratory',bg:'#F3E5F5',lc:'#7B1FA2'},{l:'R',c:'RESPIRATORY',d:'Rate &#183; Effort &#183; Pattern &#183; Cough &#183; Fatigue',bg:'#E8F5E9',lc:'#1B5E20'},{l:'D',c:'DEPENDENCY',d:'Care &#183; Pain &#183; Communication &#183; Positioning &#183; Mobility &#183; Function &#183; Impairments &#183; Disability',bg:'#FFF3E0',lc:'#BF5000'}];var TW=504,RH=30,TH=28+rows.length*RH+8;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="28" fill="#004D5E"/>';s+='<text x="252" y="19" text-anchor="middle" fill="white" font-size="11" font-weight="bold">SPINAL CORD INJURY &#8212; THINK MNEMONIC</text>';rows.forEach(function(r,i){var y=28+i*RH;s+='<rect y="'+y+'" width="'+TW+'" height="'+RH+'" fill="'+r.bg+'"/>';if(i>0)s+='<line x1="0" y1="'+y+'" x2="'+TW+'" y2="'+y+'" stroke="#d8dde0" stroke-width="0.5"/>';s+='<circle cx="20" cy="'+(y+15)+'" r="12" fill="'+r.lc+'"/>';s+='<text x="20" y="'+(y+20)+'" text-anchor="middle" fill="white" font-size="12" font-weight="bold">'+r.l+'</text>';s+='<text x="40" y="'+(y+11)+'" fill="'+r.lc+'" font-size="10" font-weight="bold">'+r.c+'</text>';s+='<text x="40" y="'+(y+23)+'" fill="#425563" font-size="9">'+r.d+'</text>';});s+='</svg>';return s;}()),
+asiaScale:(function(){var grades=[{g:'A',name:'Complete',desc:'No sensory or motor function preserved in sacral segments S4-5.',c:'#DA291C',bg:'#fde8e8'},{g:'B',name:'Sensory Incomplete',desc:'Sensory but NOT motor function preserved below NLI, including sacral S4-5.',c:'#ED8B00',bg:'#fff3e0'},{g:'C',name:'Motor Incomplete',desc:'Motor preserved. Less than half of key muscles below NLI have grade 3 or more.',c:'#005EB8',bg:'#e8f4fd'},{g:'D',name:'Motor Incomplete',desc:'Motor preserved. At least half of key muscles below NLI have grade 3 or more.',c:'#007a3d',bg:'#e8f4ea'},{g:'E',name:'Normal',desc:'Sensation and motor function normal in all segments. Used in follow-up only.',c:'#003087',bg:'#e2eaf5'}];var TW=504,RH=38,TH=26+grades.length*RH+14;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="26" fill="#003087"/>';s+='<text x="252" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">ASIA IMPAIRMENT SCALE (AIS) &#8212; GRADE DEFINITIONS</text>';grades.forEach(function(g,i){var y=26+i*RH;s+='<rect y="'+y+'" width="'+TW+'" height="'+RH+'" fill="'+g.bg+'"/>';if(i>0)s+='<line x1="0" y1="'+y+'" x2="'+TW+'" y2="'+y+'" stroke="#d8dde0" stroke-width="0.5"/>';s+='<rect x="0" y="'+y+'" width="36" height="'+RH+'" fill="'+g.c+'"/>';s+='<text x="18" y="'+(y+13)+'" text-anchor="middle" fill="white" font-size="8">GRADE</text>';s+='<text x="18" y="'+(y+28)+'" text-anchor="middle" fill="white" font-size="16" font-weight="bold">'+g.g+'</text>';s+='<text x="44" y="'+(y+14)+'" fill="'+g.c+'" font-size="11" font-weight="bold">'+g.name+'</text>';s+='<text x="44" y="'+(y+27)+'" fill="#425563" font-size="10">'+g.desc+'</text>';});s+='<text x="252" y="'+(TH-3)+'" text-anchor="middle" fill="#003087" font-size="9">Complete within 72hrs of injury. Repeat pre/post spinal surgery and at intervals for incomplete SCI.</text>';s+='</svg>';return s;}()),
+autoDysreflexia:(function(){var cols=[{title:'COMMON CAUSES',items:['Blocked/kinked catheter','UTI or bladder stones','Constipation / impacted bowel','Having bowel care performed','Pressure ulcer / tight clothing','Ingrown toenail / blister','Scrotal compression / sexual stimulation'],c:'#DA291C',bg:'#fde8e8'},{title:'SIGNS &amp; SYMPTOMS',items:['Hypertension (BP 20-30mmHg above normal)','Bradycardia','Pounding headache','Flushed face and upper body','Profuse sweating above injury','Stuffy / blocked nose','Blurred vision / tight chest'],c:'#ED8B00',bg:'#fff3e0'},{title:'EMERGENCY TREATMENT',items:['Sit patient UP / whole bed tilt head up','Identify and remove the cause','Check catheter first (blocked/kinked?)','Check bowel (constipation?)','Loosen tight clothing / TEDs','GTN spray or Nifedipine 10mg (PRN)','Monitor BP. Document episode.'],c:'#003087',bg:'#e8f4fd'}];var CW=168,TW=504,IH=17,IC=7,TH=26+26+IC*IH+18;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="26" fill="#5D1A2A"/>';s+='<text x="252" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">AUTONOMIC DYSREFLEXIA &#8212; CAUSES &#183; SIGNS &#183; TREATMENT</text>';cols.forEach(function(col,ci){var x=ci*CW;s+='<rect x="'+x+'" y="26" width="'+CW+'" height="26" fill="'+col.c+'"/>';s+='<text x="'+(x+CW/2)+'" y="43" text-anchor="middle" fill="white" font-size="10" font-weight="bold">'+col.title+'</text>';s+='<rect x="'+x+'" y="52" width="'+CW+'" height="'+(IC*IH+10)+'" fill="'+col.bg+'"/>';col.items.forEach(function(item,ii){s+='<text x="'+(x+6)+'" y="'+(52+ii*IH+12)+'" fill="#212b32" font-size="9">&#8226; '+item+'</text>';});if(ci>0)s+='<line x1="'+x+'" y1="26" x2="'+x+'" y2="'+TH+'" stroke="#d8dde0" stroke-width="1"/>';});s+='<text x="252" y="'+(TH-3)+'" text-anchor="middle" fill="#DA291C" font-size="9" font-weight="bold">LIFE-THREATENING &#8212; Risk at T6 or above &#8212; Treat immediately</text>';s+='</svg>';return s;}()),
+spinalLevels:'<svg viewBox="0 0 504 480" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif"><rect width="504" height="480" fill="white"/><rect width="504" height="26" fill="#003087"/><text x="252" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">SPINAL CORD LEVELS &#8212; KEY INNERVATION FUNCTIONS</text><!-- SPINE COLUMN --><rect x="224" y="35" width="12" height="430" fill="#e8edf0" rx="6"/><!-- CERVICAL region colour band --><rect x="224" y="38" width="12" height="82" fill="#0072CE" rx="4"/><!-- THORACIC region --><rect x="224" y="122" width="12" height="168" fill="#007a3d" rx="2"/><!-- LUMBAR region --><rect x="224" y="292" width="12" height="90" fill="#ED8B00" rx="2"/><!-- SACRAL region --><rect x="224" y="384" width="12" height="62" fill="#DA291C" rx="2"/><!-- COCCYGEAL --><rect x="224" y="448" width="12" height="16" fill="#888" rx="4"/><!-- VERTEBRA discs (horizontal lines) --><line x1="220" y1="48" x2="244" y2="48" stroke="white" stroke-width="1.5"/><line x1="220" y1="58" x2="244" y2="58" stroke="white" stroke-width="1.5"/><line x1="220" y1="68" x2="244" y2="68" stroke="white" stroke-width="1.5"/><line x1="220" y1="78" x2="244" y2="78" stroke="white" stroke-width="1.5"/><line x1="220" y1="88" x2="244" y2="88" stroke="white" stroke-width="1.5"/><line x1="220" y1="98" x2="244" y2="98" stroke="white" stroke-width="1.5"/><line x1="220" y1="108" x2="244" y2="108" stroke="white" stroke-width="1.5"/><line x1="220" y1="118" x2="244" y2="118" stroke="white" stroke-width="1.5"/><line x1="220" y1="130" x2="244" y2="130" stroke="white" stroke-width="1.5"/><line x1="220" y1="142" x2="244" y2="142" stroke="white" stroke-width="1.5"/><line x1="220" y1="154" x2="244" y2="154" stroke="white" stroke-width="1.5"/><line x1="220" y1="166" x2="244" y2="166" stroke="white" stroke-width="1.5"/><line x1="220" y1="178" x2="244" y2="178" stroke="white" stroke-width="1.5"/><line x1="220" y1="190" x2="244" y2="190" stroke="white" stroke-width="1.5"/><line x1="220" y1="202" x2="244" y2="202" stroke="white" stroke-width="1.5"/><line x1="220" y1="214" x2="244" y2="214" stroke="white" stroke-width="1.5"/><line x1="220" y1="226" x2="244" y2="226" stroke="white" stroke-width="1.5"/><line x1="220" y1="238" x2="244" y2="238" stroke="white" stroke-width="1.5"/><line x1="220" y1="250" x2="244" y2="250" stroke="white" stroke-width="1.5"/><line x1="220" y1="262" x2="244" y2="262" stroke="white" stroke-width="1.5"/><line x1="220" y1="274" x2="244" y2="274" stroke="white" stroke-width="1.5"/><line x1="220" y1="284" x2="244" y2="284" stroke="white" stroke-width="1.5"/><line x1="220" y1="298" x2="244" y2="298" stroke="white" stroke-width="1.5"/><line x1="220" y1="316" x2="244" y2="316" stroke="white" stroke-width="1.5"/><line x1="220" y1="334" x2="244" y2="334" stroke="white" stroke-width="1.5"/><line x1="220" y1="352" x2="244" y2="352" stroke="white" stroke-width="1.5"/><line x1="220" y1="370" x2="244" y2="370" stroke="white" stroke-width="1.5"/><!-- SECTION LABELS LEFT --><rect x="6" y="34" width="68" height="20" fill="#0072CE" rx="3"/><text x="40" y="48" text-anchor="middle" fill="white" font-size="11" font-weight="bold">CERVICAL</text><text x="40" y="62" text-anchor="middle" fill="#0072CE" font-size="10">C1 &#8211; C8</text><rect x="6" y="118" width="68" height="20" fill="#007a3d" rx="3"/><text x="40" y="132" text-anchor="middle" fill="white" font-size="11" font-weight="bold">THORACIC</text><text x="40" y="146" text-anchor="middle" fill="#007a3d" font-size="10">T1 &#8211; T12</text><rect x="6" y="288" width="68" height="20" fill="#ED8B00" rx="3"/><text x="40" y="302" text-anchor="middle" fill="white" font-size="11" font-weight="bold">LUMBAR</text><text x="40" y="316" text-anchor="middle" fill="#ED8B00" font-size="10">L1 &#8211; L5</text><rect x="6" y="380" width="68" height="20" fill="#DA291C" rx="3"/><text x="40" y="394" text-anchor="middle" fill="white" font-size="11" font-weight="bold">SACRAL</text><text x="40" y="408" text-anchor="middle" fill="#DA291C" font-size="10">S1 &#8211; S5</text><text x="40" y="456" text-anchor="middle" fill="#888" font-size="9">Coccygeal</text><!-- LINES from spine left --><line x1="78" y1="44" x2="222" y2="44" stroke="#0072CE" stroke-width="1" stroke-dasharray="3,2"/><line x1="78" y1="128" x2="222" y2="128" stroke="#007a3d" stroke-width="1" stroke-dasharray="3,2"/><line x1="78" y1="298" x2="222" y2="298" stroke="#ED8B00" stroke-width="1" stroke-dasharray="3,2"/><line x1="78" y1="390" x2="222" y2="390" stroke="#DA291C" stroke-width="1" stroke-dasharray="3,2"/><!-- RIGHT SIDE FUNCTION LABELS --><text x="248" y="50" fill="#0072CE" font-size="9" font-weight="bold">C1-C3</text><text x="290" y="50" fill="#212b32" font-size="9">Neck muscles</text><text x="248" y="63" fill="#0072CE" font-size="9" font-weight="bold">C4</text><text x="290" y="63" fill="#212b32" font-size="9">Diaphragm &#9675;</text><text x="248" y="76" fill="#0072CE" font-size="9" font-weight="bold">C5</text><text x="290" y="76" fill="#212b32" font-size="9">Deltoid (shoulder)</text><text x="248" y="89" fill="#0072CE" font-size="9" font-weight="bold">C6</text><text x="290" y="89" fill="#212b32" font-size="9">Wrist extensors</text><text x="248" y="102" fill="#0072CE" font-size="9" font-weight="bold">C7</text><text x="290" y="102" fill="#212b32" font-size="9">Triceps</text><text x="248" y="115" fill="#0072CE" font-size="9" font-weight="bold">C7-C8</text><text x="290" y="115" fill="#212b32" font-size="9">Fingers</text><text x="248" y="135" fill="#007a3d" font-size="9" font-weight="bold">T1</text><text x="290" y="135" fill="#212b32" font-size="9">Hand intrinsics</text><text x="248" y="150" fill="#007a3d" font-size="9" font-weight="bold">T2-T6</text><text x="290" y="150" fill="#212b32" font-size="9">Upper intercostals</text><text x="248" y="165" fill="#007a3d" font-size="9" font-weight="bold">T6-T12</text><text x="290" y="165" fill="#212b32" font-size="9">Lower intercostals / trunk</text><text x="248" y="180" fill="#007a3d" font-size="9" font-weight="bold">T7-L1</text><text x="290" y="180" fill="#212b32" font-size="9">Abdominals</text><text x="248" y="195" fill="#007a3d" font-size="9" font-weight="bold">T11-L2</text><text x="290" y="195" fill="#212b32" font-size="9">Ejaculation</text><text x="248" y="212" fill="#007a3d" font-size="9" font-weight="bold">T1-T4</text><text x="290" y="212" fill="#FF6600" font-size="9" font-weight="bold">&#9888; Cardiac sympathetic</text><text x="248" y="227" fill="#007a3d" font-size="9" font-weight="bold">T6+</text><text x="290" y="227" fill="#FF6600" font-size="9" font-weight="bold">&#9888; Autonomic Dysreflexia risk</text><!-- LUMBAR --><text x="248" y="305" fill="#ED8B00" font-size="9" font-weight="bold">L2</text><text x="290" y="305" fill="#212b32" font-size="9">Hip flexors</text><text x="248" y="320" fill="#ED8B00" font-size="9" font-weight="bold">L3</text><text x="290" y="320" fill="#212b32" font-size="9">Quadriceps (knee extensor)</text><text x="248" y="335" fill="#ED8B00" font-size="9" font-weight="bold">L4-L5</text><text x="290" y="335" fill="#212b32" font-size="9">Hamstrings / Knee</text><text x="248" y="350" fill="#ED8B00" font-size="9" font-weight="bold">L4-S1</text><text x="290" y="350" fill="#212b32" font-size="9">Foot (dorsiflexion/plantarflexion)</text><!-- SACRAL --><text x="248" y="396" fill="#DA291C" font-size="9" font-weight="bold">S2</text><text x="290" y="396" fill="#212b32" font-size="9">Penile erection</text><text x="248" y="411" fill="#DA291C" font-size="9" font-weight="bold">S2-S3</text><text x="290" y="411" fill="#212b32" font-size="9">Bowel and bladder control</text><text x="248" y="426" fill="#DA291C" font-size="9" font-weight="bold">S4-S5</text><text x="290" y="426" fill="#212b32" font-size="9">Perianal sensation (ASIA testing)</text><!-- HUMAN BODY SILHOUETTE right side (simplified) --><ellipse cx="460" cy="68" rx="18" ry="22" fill="#f5d0a9" stroke="#dbb07a" stroke-width="1"/><rect x="447" y="88" width="26" height="80" fill="#f5d0a9" stroke="#dbb07a" stroke-width="1" rx="4"/><line x1="447" y1="95" x2="430" y2="155" stroke="#f5d0a9" stroke-width="10" stroke-linecap="round"/><line x1="473" y1="95" x2="490" y2="155" stroke="#f5d0a9" stroke-width="10" stroke-linecap="round"/><line x1="452" y1="168" x2="445" y2="240" stroke="#f5d0a9" stroke-width="12" stroke-linecap="round"/><line x1="468" y1="168" x2="475" y2="240" stroke="#f5d0a9" stroke-width="12" stroke-linecap="round"/><line x1="445" y1="240" x2="443" y2="290" stroke="#f5d0a9" stroke-width="10" stroke-linecap="round"/><line x1="475" y1="240" x2="477" y2="290" stroke="#f5d0a9" stroke-width="10" stroke-linecap="round"/><!-- Colour overlays showing regions on body --><rect x="449" y="78" width="22" height="20" fill="#0072CE" fill-opacity="0.35" rx="2"/><rect x="449" y="98" width="22" height="52" fill="#007a3d" fill-opacity="0.35" rx="2"/><rect x="452" y="150" width="16" height="40" fill="#ED8B00" fill-opacity="0.35" rx="2"/><rect x="452" y="190" width="16" height="30" fill="#DA291C" fill-opacity="0.35" rx="2"/><!-- body labels --><text x="460" y="360" text-anchor="middle" fill="#003087" font-size="9" font-weight="bold">Body</text><text x="460" y="371" text-anchor="middle" fill="#003087" font-size="9">regions</text><text x="460" y="384" text-anchor="middle" fill="#0072CE" font-size="9">&#9632; Cervical</text><text x="460" y="396" text-anchor="middle" fill="#007a3d" font-size="9">&#9632; Thoracic</text><text x="460" y="408" text-anchor="middle" fill="#ED8B00" font-size="9">&#9632; Lumbar</text><text x="460" y="420" text-anchor="middle" fill="#DA291C" font-size="9">&#9632; Sacral</text><!-- KEY note --><rect x="248" y="440" width="210" height="32" fill="#fff3cd" rx="3" stroke="#ED8B00" stroke-width="1"/><text x="253" y="453" fill="#7a4500" font-size="9" font-weight="bold">&#9672; C4 = Diaphragm &#8212; injury at/above = ventilator dependency</text><text x="253" y="465" fill="#7a4500" font-size="9" font-weight="bold">&#9672; T6+ = Autonomic Dysreflexia risk</text></svg>',
+frankelGrade:(function(){var grades=[{g:'A',d:'Complete loss of motor AND sensory function',c:'#DA291C',bg:'#fde8e8'},{g:'B',d:'Incomplete &#8212; preserved sensation only (no motor)',c:'#ED8B00',bg:'#fff3e0'},{g:'C',d:'Incomplete &#8212; preserved motor (non-functional)',c:'#005EB8',bg:'#e8f4fd'},{g:'D',d:'Incomplete &#8212; preserved motor (functional)',c:'#007a3d',bg:'#e8f4ea'},{g:'E',d:'Complete return of motor and sensory (may have abnormal reflexes)',c:'#003087',bg:'#e2eaf5'}];var TW=504,RH=34,TH=26+grades.length*RH+10;var s='<svg viewBox="0 0 '+TW+' '+TH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:12px;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif">';s+='<rect width="'+TW+'" height="'+TH+'" fill="white"/>';s+='<rect width="'+TW+'" height="26" fill="#4A1D6E"/>';s+='<text x="252" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="bold">FRANKEL GRADE SCALE</text>';grades.forEach(function(g,i){var y=26+i*RH;s+='<rect y="'+y+'" width="'+TW+'" height="'+RH+'" fill="'+g.bg+'"/>';if(i>0)s+='<line x1="0" y1="'+y+'" x2="'+TW+'" y2="'+y+'" stroke="#d8dde0" stroke-width="0.5"/>';s+='<rect x="0" y="'+y+'" width="36" height="'+RH+'" fill="'+g.c+'"/>';s+='<text x="18" y="'+(y+RH/2+7)+'" text-anchor="middle" fill="white" font-size="18" font-weight="bold">'+g.g+'</text>';s+='<text x="44" y="'+(y+RH/2+5)+'" fill="#212b32" font-size="12">'+g.d+'</text>';});s+='</svg>';return s;}())
+};
+
+// ═══════════════════════════════════════════
+//  ALL CARD DATA
+// ═══════════════════════════════════════════
+var CATEGORIES = [
+  {id:"wccc", label:"WCCC COWS Reference — Queen Elizabeth Hospital Birmingham"},
+  {id:"sci",  label:"Spinal Cord Injury Best Practice Guide — Midlands Critical Care &amp; Trauma Networks"}
+];
+
+var DATA = {
+"Blood Transfusion":{doc:"wccc",color:{bg:"#8b1a1a",accent:"#DA291C"},cards:[
+{q:"Who is the universal donor and what can they receive?",a:"O- is the universal donor — can give to all 8 blood types.\nHowever, O- can only RECEIVE from O-.",diagram:"bloodCompat"},
+{q:"Who is the universal recipient?",a:"AB+ — can receive from all 8 blood types:\nO-, O+, A-, A+, B-, B+, AB-, AB+.",diagram:"bloodCompat"},
+{q:"Can A+ receive from B+ donor?",a:"No — incompatible.\nA+ can only receive from: O-, O+, A-, A+."},
+{q:"Can B- receive from O+ donor?",a:"No — incompatible.\nB- can only receive from O- and B-."},
+{q:"Which blood types can O+ receive?",a:"O- and O+ only.\nO+ cannot receive A, B, or AB blood."},
+{q:"Which blood types can AB- receive?",a:"O-, A-, B-, AB- only.\nAB- cannot receive any positive blood type."},
+{q:"Which blood types can B+ receive?",a:"O-, O+, B-, B+ only.\nB+ cannot receive A or AB blood."},
+{q:"Name all 8 blood types in the ABO/Rh system.",a:"O-, O+, A-, A+, B-, B+, AB-, AB+.\nAB+ = universal recipient. O- = universal donor."}
+]},
+"Phlebotomy & Samples":{doc:"wccc",color:{bg:"#5B0F77",accent:"#AE2573"},cards:[
+{q:"Quick reference: which top for which department?",a:"Red Top → Biochemistry / Serology / Immunology\nPurple Top → Haematology / some Biochemistry\nOchre (Yellow) Top → Biochemistry\nGrey Top → Biochemistry (Alcoholic screening)\nBlue Top → Haematology (coagulation / DIC)",diagram:"tubeRef"},
+{q:"Alcoholic Screening — which tube and form?",a:"1x Grey Top → Biochemistry (Green form)\nLabel: Alcoholic Screening"},
+{q:"Aminophylline / Theophylline level — which tube?",a:"1x Red Top → Biochemistry\nLabel: Aminophylline/Theophylline"},
+{q:"Ammonia Level — which tube?",a:"2x Purple Top → Biochemistry\nLabel: Ammonia Level"},
+{q:"Amylase — which tube?",a:"1x Ochre Top (= Yellow) → Biochemistry"},
+{q:"Cyclosporine Level — which tube?",a:"1x Purple Top → Biochemistry"},
+{q:"D-Dimer — which tubes?",a:"1x Purple Top + 1x Blue Top → Haematology"},
+{q:"DIC Test — which tubes and special instruction?",a:"1x Purple Top + 1x Blue Top → Haematology\nState clearly on chart what test you need."},
+{q:"Digoxin Level — which tube and special instruction?",a:"1x Red Top → Biochemistry\nSend with morning bloods — usually before dose is given."},
+{q:"Fibrinogen — which tube?",a:"1x Purple Top → Haematology\nState what test is needed clearly."},
+{q:"Gentamicin — which tube?",a:"1x Red Top → Biochemistry\nTake post drug level."},
+{q:"Haptoglobin — which tube?",a:"1x Purple Top → Haematology"},
+{q:"HIV / Hepatitis Screening — tube and form?",a:"1x Red Top → Serology (Green form)"},
+{q:"HIT Screen — which tube and how many?",a:"2x Purple Top → Haematology\nLabel clearly: HIT Screen"},
+{q:"LDH — which tube?",a:"1x Ochre Top → Biochemistry"},
+{q:"Lithium Screening — which tube?",a:"1x Red Top → Biochemistry"},
+{q:"Myeloma Screening (Basic) — which tube?",a:"1x Red Top → Immunology (Yellow top form)\nTick Para-protein / Myeloma screen."},
+{q:"Myeloma Screening (Full Test / UFLC) — which tube?",a:"1x Red Top + 25ml Urine (Universal Top) → Immunology\nTick UFLC on form."},
+{q:"Paracetamol and Salicylate Level — which tube?",a:"1x Red Top → Biochemistry"},
+{q:"Phenytoin — which tube?",a:"1x Red Top → Biochemistry"},
+{q:"TFT (Thyroid Function Test) — which tube?",a:"1x Ochre Top → Biochemistry"},
+{q:"Troponin T — which tube?",a:"1x Ochre Top → Biochemistry\nEnsure ECG is done."},
+{q:"Tacrolimus Level — which tube?",a:"1x Purple Top → Biochemistry\nSend with morning bloods."},
+{q:"Vancomycin Level — which tube?",a:"1x Red Top → Biochemistry\nMonitor level with continual infusion and adjust rate as appropriate."},
+{q:"Serum Osmolarity — which tube?",a:"1x Ochre Top → Biochemistry\nUsually followed with Urine Osmolarity."},
+{q:"Synacthen Test (SST) — which tube and timing?",a:"1x Red Top → Biochemistry\nTake 30 mins pre-dose, then 30 mins post-dose."},
+{q:"PCP/PSC — which tube?",a:"1x Red Top → Serology"},
+{q:"Toxicology Screening — which samples?",a:"1x Urine (White Top) + 1x Green Top Blood → Biochemistry\nGoes to city for processing — sent on a Monday."},
+{q:"CPE Screening — which swab?",a:"1x Swab-Rectum → Microbiology Form\nState what you are sending clearly."},
+{q:"Respiratory Screening H1N1 / Flu — which swab?",a:"Rapid testing (in-house): 1x Throat Swab — Cepheid rapid use bottle. Ring resp lab 16534.\nSending away: Red Top bottle → Microbiology/Virology form. Send away: Hartland's."},
+{q:"Urine Osmolarity — which container?",a:"1x Universal Container → Biochemistry\nState what fluid you are sending."},
+{q:"PCR swab — which container?",a:"1x Universal Swab → Microbiology (Blue top form)\nState where swabbed."}
+]},
+"ICP Management":{doc:"wccc",color:{bg:"#003087",accent:"#41B6E6"},cards:[
+{q:"ICP management — 4 escalation steps?",a:"Step 1: Positioning, sedation, ventilation targets\nStep 2: CSF drainage, CT imaging\nStep 3: Osmotherapy, CPP optimisation\nStep 4: Barbiturate coma / surgery (consultant only)",diagram:"icpSteps"},
+{q:"What is the ICP target in closed head injury?",a:"ICP < 20 mmHg at baseline.\nAvoid sustained spikes > 25 mmHg."},
+{q:"What CPP must be maintained in TBI?",a:"CPP > 60 mmHg (measured at foramen of Monroe / tragus).\nStep 3 may trial CPP > 70 mmHg."},
+{q:"Step 1 sedation regimen for ICP control?",a:"Propofol 2–4 mg/kg/hr\n+ Morphine 1–20 mg/hr OR Alfentanil 0.5–10 mg/hr.\nAdd Midazolam if ICP remains uncontrolled."},
+{q:"When is thiopentone used and what is the dosing?",a:"Step 4 — refractory ICP (consultant decision only).\n250 mg boluses up to 3–5 g, then infusion 3–8 mg/kg/hr.\nTarget EEG burst suppression >3:1 ratio."},
+{q:"Step 3 osmotherapy options?",a:"3% NaCl 3–5 ml/kg (if Na < 155, Posm < 320)\nOR 20% Mannitol 2 ml/kg × 3 doses if Posm < 320.\nLimited evidence favours hypertonic saline."},
+{q:"Initial ventilation settings for closed head injury?",a:"VT: 6–8 ml/kg | Rate: 12–16/min (adult)\nFiO2: 0.3–0.4 | I:E 1:2 | PEEP: 5 cmH2O\nTarget PaO2 > 11 kPa | PaCO2: 4.5–5.0 kPa"},
+{q:"PbtO2 and LPR targets in TBI?",a:"PbtO2 > 25 mmHg\nLactate : Pyruvate Ratio (LPR) < 25"},
+{q:"Temperature target in TBI?",a:"Core temp < 37.5°C — treat fever vigorously:\n• Paracetamol 15 mg/kg (max 90 mg/kg/24hr)\n• Cooling blanket / ice packs (groin/axilla)\n• Diclofenac < 0.5–1 mg/kg/24hr"},
+{q:"Blood glucose target in TBI?",a:"6–10 mmol/L (sliding scale insulin).\nAccept mild hyperglycaemia (<10) to avoid hypoglycaemia."},
+{q:"Seizure prophylaxis — who gets levetiracetam?",a:"• Previous epileptic already on treatment (continue their AED)\n• Depressed skull fracture with dural tear\nIf already on levetiracetam, use phenytoin as secondary agent."},
+{q:"Seizure treatment — loading dose?",a:"IV Keppra OR Phenytoin: 15 mg/kg at < 50 mg/min.\nMaintenance: 3–4 mg/kg/24hr in 3 divided IV doses."},
+{q:"Refractory seizures — escalation?",a:"Increase levetiracetam to 1g BD.\nSevere: load levetiracetam 1–2g IV over ~1 hour.\nConsider: valproate / carbamazepine / clonazepam / phenobarbitone.\nStill uncontrolled: thiopentone."},
+{q:"Neuromuscular blockade — key rule?",a:"NMBA bolus IS beneficial for controlling ICP during stimulating procedures.\nDO NOT use long-term vecuronium infusions — evidence of harm."},
+{q:"Enteral feeding — when to start and targets?",a:"Start within 24 hours of admission.\nBuild up to 100 ml/hr for 20/24 hrs.\n4hr rest at night. Stop PPI/Ranitidine when feeding absorbed."},
+{q:"Enteral feeding — if failure to absorb?",a:"Metoclopramide 10 mg IV 6-hourly.\nErythromycin 250 mg BD IV (not as routine).\nDiarrhoea: consider C. diff (3x stool for toxin).\nNot established by 48–72 hours: consider TPN."},
+{q:"ICP Bolt — what must you NOT do?",a:"Do NOT disconnect the disposable probe or non-disposable cable.\nDo NOT disconnect for transfer — take the Codman box.\nDo NOT disconnect the plug cable from back of box.\nDo NOT disturb the Tegaderm dressing."},
+{q:"ICP Bolt — how often to zero and what else to document?",a:"Zero the probe every shift.\nDocument hourly pupillary reactions.\nDocument bolt reference number on ITU chart."},
+{q:"Noradrenaline dose range in TBI?",a:"1–20 µg/kg/hr (1–20 ml/hr).\nAdrenaline: also 1–20 µg/kg/hr.\nDopamine: µg/kg/min (different unit)."},
+{q:"Volume status targets in TBI?",a:"HCT 30–35% (Hb ~9 g/dl)\nCVP 8–12 cmH2O\nUrine output ~0.5–1 ml/kg/hr\nMAP ~90 mmHg (CPP > 60 mmHg)"}
+]},
+"EVD Care":{doc:"wccc",color:{bg:"#007a3d",accent:"#009639"},cards:[
+{q:"EVD zero reference point?",a:"External Auditory Meatus (EAM) — patient supine.\nIf patient lying on side: use bridge of nose.",diagram:"evdRef"},
+{q:"When must you alert medical staff about EVD drainage?",a:"Drainage exceeds 10 ml MORE than previous hourly volume.\nOR 30 ml or more drains in one hour.\nAverage adult drainage: 5–10 ml/hr."},
+{q:"What does bloodstained or cloudy CSF indicate?",a:"Red/bloodstained → blood in ventricular system / haemorrhage.\nXanthochromic (straw) → ≥6 hrs post-SAH (haemoglobin breakdown).\nCloudy → infection."},
+{q:"What must be done BEFORE repositioning a patient with EVD?",a:"Increase EVD level BEFORE repositioning or chest care.\nRe-establish zero point AFTER the procedure.\n(Prevents over-drainage and ventricular collapse.)"},
+{q:"How to prepare for patient transfer with EVD?",a:"1. Empty EVD chamber\n2. Turn three-way tap OFF to patient\n3. Clamp air inlet at top of chamber\n4. Place entire drainage system on the bed"},
+{q:"Normal CSF appearance?",a:"Clear, colourless and odourless.\nAny change must be documented and reported immediately."},
+{q:"EVD head elevation?",a:"At least 30° head up.\nRationale: assists venous drainage from the head."},
+{q:"Priming the AccuDrain transducer?",a:"0.9% Sodium Chloride — strict aseptic technique.\nFlush all ports with ~0.5 ml using syringe and blue pull tab.\nApply 2 white bungs after flushing."},
+{q:"No CSF drainage from EVD — what do you do?",a:"Check tubing for kinks, blockage or closed stopcocks.\nCheck if CSF is oscillating (swinging = patent).\nSuspected blockage → report to Neurosurgeon IMMEDIATELY.\nDo NOT attempt to unblock the drain."},
+{q:"EVD drainage bags — when changed?",a:"When ¾ full — under strict aseptic conditions."},
+{q:"Signs of over or under EVD drainage?",a:"• Severe headache\n• Drowsiness\n• Apnoea\n• Signs of raised ICP\n• Changes in pupil reactions"},
+{q:"Who can take CSF samples from the EVD?",a:"A nurse in WCCC who has completed the expanded practice protocol OR a doctor.\nFor MC+S, glucose, signs of infection, cell count prior to removal."}
+]},
+"Vancomycin Infusion":{doc:"wccc",color:{bg:"#7C2855",accent:"#AE2573"},cards:[
+{q:"Vancomycin dose adjustment — full table?",a:"See table below.",diagram:"vancoLevels"},
+{q:"Loading dose: patient < 70 kg?",a:"1 g in 250 ml 0.9% Saline IV over 1 hour."},
+{q:"Loading dose: patient > 70 kg?",a:"1.25 g in 250 ml 0.9% Saline IV over 1 hour."},
+{q:"Maintenance — Normal renal function (Creatinine < 120)?",a:"1500 mg/day. Infusion rate: 16 ml/hr (63 mg/hr)."},
+{q:"Maintenance — Impaired renal function (Creatinine > 120) or CVVH?",a:"1000 mg/day. Infusion rate: 10 ml/hr (42 mg/hr)."},
+{q:"Vancomycin level < 15 mg/L — action?",a:"Increase daily dose by 500 mg. Increase infusion rate to next level."},
+{q:"Vancomycin level 15–25 mg/L — action?",a:"No change required."},
+{q:"Vancomycin level > 25 mg/L — action?",a:"Decrease daily dose by 500 mg. Decrease infusion rate to next level."},
+{q:"Vancomycin level > 30 mg/L — action?",a:"STOP infusion for 6 hours.\nRestart at reduced dose as agreed on ward round."},
+{q:"When must daily levels be taken?",a:"06:00 am daily.\nMay only be omitted if infusion has been running for less than 6 hours."},
+{q:"Infusion rate summary?",a:"250mg → 3 ml/hr\n500mg → 5 ml/hr\n1000mg → 10 ml/hr\n1500mg → 16 ml/hr\n2000mg → 21 ml/hr\n2500mg → 26 ml/hr\n3000mg → 31 ml/hr"},
+{q:"Who should NOT receive Vancomycin continuous infusion?",a:"• Known drug reaction to vancomycin\n• Vancomycin-resistant / intermediate organisms\n• Also receiving gentamicin"}
+]},
+"Patient Observations":{doc:"wccc",color:{bg:"#7c2d12",accent:"#f97316"},cards:[
+{q:"Observation frequency quick reference?",a:"See chart below.",diagram:"obsFreq"},
+{q:"Obs: Craniotomy (SOL)?",a:"½ hrly × 4 hrs → 1 hrly × 4 hrs → 2 hrly × 4 hrs\nThen reduce."},
+{q:"Obs: Aneurysm / Posterior Fossa / Coiling / Craniectomy?",a:"½ hrly × 6 hrs → 1 hrly × 6 hrs → 2 hrly × 6 hrs\nThen reduce. Maintain SaO2 ≥ 95%."},
+{q:"Obs: Subarachnoid Haemorrhage (prior to surgery)?",a:"½ hrly × 4 hrs → 1 hrly × 4 hrs → 2 hrly as condition dictates."},
+{q:"Obs: 'Cold' Angiography?",a:"½ hrly × 2 hrs → 1 hrly × 4 hrs. Then reduce."},
+{q:"Obs: Post-bleed Angiography?",a:"½ hrly × 4 hrs → 1 hrly × 4 hrs. Then reduce."},
+{q:"Obs: Lumbar/Thoracic Spinal Surgery?",a:"½ hrly × 4 hrs → 1 hrly × 4 hrs. Then reduce."},
+{q:"Post-angiography observations?",a:"Full neuro obs · Vital signs (T, P, R, BP, SaO2) · Wound check · Pedal pulses · Angio site check"},
+{q:"Head injury / ventilated patient — obs frequency?",a:"Full neuro obs (ICP, GCS, Pupils) + vital signs — hourly.\nIf sedated: pupil reaction only + vital signs hourly."},
+{q:"Can you independently change observation frequency?",a:"NO.\nNever change without first consulting the Nurse in Charge."}
+]},
+"Lung Protective Ventilation":{doc:"wccc",color:{bg:"#005EB8",accent:"#41B6E6"},cards:[
+{q:"FiO2 : PEEP escalation — full reference?",a:"Medical Review required at FiO2 ≥ 0.8.",diagram:"fio2peep"},
+{q:"Stage 1 targets (all ventilated patients)?",a:"O2 sats: 94–98% | pCO2: 4.5–6.1 kPa\nVT: 6–8 ml/kg IBW | RR: 14 | Peak Airway P < 30 cmH2O"},
+{q:"4 criteria for Stage 2 LPV?",a:"1. FiO2 > 0.4\n2. Any cause of lung injury\n3. Bilateral infiltrates on CXR\n4. Absence of cardiogenic pulmonary oedema"},
+{q:"Stage 2 (LPV): O2 sats and pH?",a:"O2 sats: 90–93%\npH target: 7.2–7.35 (NOT pCO2)\nVT: 6 ml/kg IBW | Peak Airway P < 30 cmH2O"},
+{q:"Stage 3: failing conventional ventilation?",a:"Discuss options IMMEDIATELY with the critical care consultant."},
+{q:"FiO2 0.4 → PEEP?",a:"PEEP 8"},
+{q:"FiO2 0.5 → PEEP?",a:"PEEP 8"},
+{q:"FiO2 0.6 → PEEP?",a:"PEEP 10"},
+{q:"FiO2 0.7 → PEEP?",a:"PEEP 12"},
+{q:"FiO2 ≥ 0.8 → PEEP?",a:"PEEP 12 + Medical Review required."},
+{q:"All 5 indications for prone ventilation?",a:"1. FiO2 ≥ 0.6\n2. PaO2 ≤ 8.0 kPa\n3. PEEP > 5 cmH2O\n4. Peak Airway Pressure > 30 cmH2O\n5. Bilateral infiltrates on CXR",diagram:"proneCriteria"},
+{q:"Pre-proning checklist (Part 1)?",a:"• Inform relatives\n• Collect: slide sheets, clean sheets, pillows, ECG electrodes\n• Alternating air mattress\n• Remove piercings\n• Eye care: lacrilube, tape eyelids\n• Mouth care\n• Disconnect feed, aspirate NG\n• Deep sedation + muscle relaxation"},
+{q:"Pre-proning checklist (Part 2)?",a:"• Remove anterior ECG electrodes, reposition on back/sides\n• Disconnect non-essential IV lines\n• Chest drains: no lifting above patient, clamping by senior doctor only\n• Check ETT: grade, length at teeth, remove AnchorFast, secure with ET tape\n• Minimum 5 staff (1 airway competent at head)"},
+{q:"Proning procedure steps?",a:"1. Patient flat, hands face-down under buttocks, lines facing up\n2. Pillows over shoulders, hips, across knees\n3. Clean sheet over patient ('sweetie wrapper')\n4. Slide to one side of bed\n5. Slide up to keep head off bed\n6. Turn 90 degrees\n7. Prone fully, slide down\n8. Flex both arms toward head, palms down"},
+{q:"Post-proning checks?",a:"• Pillows under shoulders, hips, knees\n• Abdomen free to expand\n• Head facing ventilator\n• Re-check all lines and monitoring\n• Re-check pressure areas (eyes, NG, ET, catheters)\n• Reattach IV lines, resume feeding\n• Bed: reverse Trendelenburg 30-40° (feet down)\n• ABG 20 minutes after proning"},
+{q:"Prone position duration?",a:"16 hours prone, 8 hours supine.\nVary position every 1–2 hours.\nRemove TEDS or monitor toes every 2 hours.\nCPR/Defibrillation can be performed in prone if patient arrests."},
+{q:"Ideal tidal volume for 5ft 8in female?",a:"IBW: 63.9 kg → Tidal Volume: 383 ml"},
+{q:"Ideal tidal volume for 6ft 0in male?",a:"IBW: 77 kg → Tidal Volume: 466 ml"},
+{q:"Ideal tidal volume for 5ft 5in male?",a:"IBW: 61.5 kg → Tidal Volume: 369 ml"}
+]},
+"Drug Compatibility":{doc:"wccc",color:{bg:"#006747",accent:"#78BE20"},cards:[
+{q:"Is Propofol compatible with Morphine?",a:"✓ Compatible (Reference 1)"},
+{q:"Is Propofol compatible with Noradrenaline?",a:"✓ Compatible (Reference 1)"},
+{q:"Is Propofol compatible with Midazolam?",a:"✓ Compatible (Reference 1)"},
+{q:"Is Propofol compatible with Atracurium?",a:"✓ Compatible (Reference 1)"},
+{q:"Is Midazolam compatible with Noradrenaline?",a:"✓ Compatible (Reference 1)"},
+{q:"Is Midazolam compatible with Ketamine?",a:"✓ Compatible (Reference 1)"},
+{q:"Is Fentanyl compatible with Midazolam?",a:"✓ Compatible (Reference 1)"},
+{q:"Is Dopamine compatible with Noradrenaline?",a:"✓ Compatible (Reference 1)"},
+{q:"Is Sodium Bicarbonate compatible with Adrenaline?",a:"✗ Incompatible — do not co-administer."},
+{q:"Is Furosemide compatible with Midazolam?",a:"✗ Incompatible — do not co-administer."},
+{q:"Is Furosemide compatible with Propofol?",a:"✗ Incompatible — do not co-administer."},
+{q:"Is Thiopental compatible with Morphine?",a:"✗ Incompatible — do not co-administer."},
+{q:"Is Vancomycin compatible with Heparin?",a:"Variable — contact pharmacy for advice."},
+{q:"Is Vancomycin compatible with Propofol?",a:"Variable — contact pharmacy for advice."},
+{q:"Drug compatibility unknown — what do you do?",a:"Do NOT assume compatibility.\nContact pharmacy for advice before co-administering."},
+{q:"Is Calcium Chloride compatible with Sodium Bicarbonate?",a:"✗ Incompatible — do not co-administer."}
+]},
+"Antibiotic Protocols":{doc:"wccc",color:{bg:"#005073",accent:"#00A9CE"},cards:[
+{q:"Standard vs extended antibiotic infusion?",a:"Standard: 30 minutes.\nExtended: 3–4 hours.\nExtended gives better AUC and improved antimicrobial effect.",diagram:"abxInfusion"},
+{q:"Pip/Taz loading dose?",a:"4.5g in 100ml NaCl 0.9% over 30 minutes.\nPrescribe in one-off section on PICS."},
+{q:"Pip/Taz maintenance dose?",a:"50ml with NaCl 0.9% over 4 hours at 12.5 ml/hr.\nAnnotate PICS: 'For extended infusion protocol'."},
+{q:"Meropenem loading dose?",a:"1g (standard) or 2g (CNS infections / MIC ≥ 4 mg/L).\nIn 100ml NaCl 0.9% over 30 minutes."},
+{q:"Meropenem maintenance dose (1g)?",a:"50ml NaCl 0.9% over 3 hours at 16.7 ml/hr.\nAnnotate: 'For extended infusion protocol'."},
+{q:"Meropenem 2g dose (CNS / high MIC)?",a:"2g in 100ml NaCl 0.9% over 3 hours. Max 6g/day."},
+{q:"Flushes after extended antibiotic infusion?",a:"50ml volumes: flush with 5ml NaCl 0.9%.\n100ml bags: flush with 20–25ml NaCl 0.9% (giving set volume)."},
+{q:"Converting from intermittent to extended infusion?",a:"Next dose due: give as extended infusion.\nNo need for extra loading dose (no re-bolus)."},
+{q:"Where can extended infusions be given?",a:"Peripherally or through a central line.\nIf IV access limited: revert to intermittent (30 min)."},
+{q:"Who to contact for antibiotic protocol queries?",a:"Dr Whitehouse (Consultant Critical Care)\nRuth Roadley-Battin (ITU Pharmacist)\nMarie Latreche | Dr David (Consultant Microbiologist)"}
+]},
+"HFO & Ventilators":{doc:"wccc",color:{bg:"#2C2C6E",accent:"#9B8FD8"},cards:[
+{q:"HFO key controls overview?",a:"See diagram below.",diagram:"hfoDiagram"},
+{q:"HFO Bias Flow — what is it and typical setting?",a:"Controls continuous flow of humidified gas through patient circuit.\nMeasured at ET tube. Provides O2 flow and removes CO2.\nRange: 0–60 LPM. Usually set at 25–30 LPM."},
+{q:"HFO Mean Pressure — how to set initial value?",a:"Oscillator measures from Carina (not lungs).\nTake MAP from previous ventilator and ADD 5.\nUsual starting: ~40–45 cmH2O."},
+{q:"HFO recruitment procedure?",a:"Turn up in increments of 5 cmH2O. Wait 5 mins. Do ABG.\nIf good: turn up again. When 'bad' ABG (over-recruited): turn back 5.\nOnce PaO2 > 8.0 kPa: begin weaning O2."},
+{q:"HFO Power / Delta P — typical setting?",a:"Drives piston forwards and backwards. Changes to Delta P affect MAP.\nDisplayed on Amplitude monitor. Usually set at about 4."},
+{q:"HFO % Inspiratory Time?",a:"Only used as 33% or 50%.\n33% = I:E 1:2 (standard).\n50% = I:E 1:1 (increases tidal volume, reduces CO2)."},
+{q:"HFO Frequency (Hz) — typical setting?",a:"Range: 3–15 Hz. Usually set at 5 Hz (300 breaths/min).\nReducing frequency in 0.5 Hz steps reduces CO2."},
+{q:"HFO Paw > 60 cmH2O alarm — action?",a:"Red alarm. Oscillation shuts down. Bias Flow continues.\nTo restart: press RESET then STOP/START."},
+{q:"HFO Paw < 5 cmH2O alarm?",a:"Red alarm. Oscillation shuts down. Bias Flow continues.\nAlarm resets automatically once problem corrected."},
+{q:"HFO Water Trap — key rules?",a:"Check hourly. Never let level drop below bottom ridge (acts as a seal).\nNever let it overflow into tubing."},
+{q:"HFO Temperature — target and consequences?",a:"Target ~36.5°C.\nToo hot → secretions dry. Too cold → condensation risk.\nKeep water bottle feed to humidifier CLAMPED."},
+{q:"HFO Suction — frequency and cautions?",a:"Pass suction catheter every hour to check ETT patency.\nDon't suction unnecessarily — ventilator loses peak pressure."},
+{q:"Oxylog — when is readiness check needed?",a:"Every time the ventilator hose has been changed (between patients)."},
+{q:"Oxylog — setup sequence?",a:"1. Plug in O2 hose\n2. Plug in electric plug (keep on charge when not in use)\n3. Plug in disposable vent circuit BEFORE turning on (no filter needed)\n4. Press hard ON/OFF button\n5. Press rotatory knob within seconds → Menu → Device check"},
+{q:"Oxylog — device check process?",a:"Confirm supply pressure + O2. Connect non-disposable test lung (KCL/CD cupboard, staff base 2).\nSet dials to values on screen. Check takes ~2 minutes.\nVolume loudspeaker → Alarm LEDs → Alarm buzzer → Confirm → Menu → Ventilation."}
+]},
+"Microbiology Samples":{doc:"wccc",color:{bg:"#3B5323",accent:"#78BE20"},cards:[
+{q:"Most common reasons for microbiology sample rejection?",a:"32% due to incorrect patient details / incorrect information on form.\n25% due to wrong container used.\nThese are entirely preventable!"},
+{q:"Red Top (or Gold Top) — what microbiology tests?",a:"Amikacin assay, Aspergillus Galactomannan, Atypical pneumonia screen, Blood-borne virus screen (HIV, Hep B+C), Campylobacter serology, Candida antibodies, CMV IgG, Colistin assay, Diphtheria antibody, EBV IgG/IgM, Gentamicin assay*, Hepatitis A/B/C/D/E serology, HIV Ag/Ab, HTLV, H Pylori IgG, Lymes disease serology, Measles/Mumps/Rubella IgG/IgM, Parvovirus, Rubella, Syphilis serology, Tobramycin, Toxoplasma, Varicella Zoster, Vancomycin assay*, Voriconazole.\n(*Gold Top also acceptable)"},
+{q:"Purple Top (EDTA) — what microbiology tests?",a:"Adenovirus PCR, CMV PCR, EBV PCR,\nHepatitis B virus DNA (2x purple),\nHepatitis C virus PCR (2x purple),\nHepatitis D PCR (2x purple),\nMeningococcal PCR, PCP PCR"},
+{q:"Hepatitis B/C/D PCR — how many Purple Tops?",a:"2x Purple Top each (for B, C, and D separately)."},
+{q:"Sterile Universal container — what tests?",a:"BAL (bronchial/alveolar lavage), Chlamydia urine (special kit), CSU, Gonorrhoea PCR urine (special kit), Legionella antigen (urine), Meningitis (CSF), MRSA urine screen (if catheterised), TB sputum (3x samples on separate days)"},
+{q:"Faecal Pot — what tests and key handling rule?",a:"Tests: Campylobacter culture, C diff toxin, Faecal parasites, Norovirus PCR, Salmonella, Shigella.\n⚠️ Remove sputum trap from top of tube and replace with cap before sending — otherwise NOT processed."},
+{q:"CSF sampling — which containers?",a:"Label Universal Containers SEQUENTIALLY:\nMicrobiology: Sterile Universal 1 & 3 (cell count, Gram stain, culture)\nBiochemistry: Sterile Universal 2 (glucose + protein) + concurrent blood in Grey Top\nCytology: Sterile Universal 4\n⚠️ Always call Microbiology technician when sending a CSF sample."},
+{q:"Ascitic Fluid — which containers?",a:"Microbiology: Sterile Universal x2 + Purple Top vacutainer + Culture bottles (+ extra SU if TB suspected)\nBiochemistry: Sterile Universal x1 (protein, albumin, LDH, amylase)\nCytology: Sterile Universal x1 (if malignancy suspected)"},
+{q:"Pleural Fluid — which containers?",a:"Microbiology: Sterile Universal x1 (microscopy and cultures)\nBiochemistry: Sterile Universal x1 (glucose + protein) + concurrent blood in Grey Top AND Gold Top\nCytology: Sterile Universal x1"},
+{q:"Viral Throat Swabs — which brands?",a:"Rapid Panel (Flu A, B and RSV): Cepheid Xpert® swab (in-house).\nExtended Panel (immunocompromised): Oxoid IDEIA™ Chlamydia transport medium (sent to Heartlands)."},
+{q:"MRSA Screen — swabs and sites?",a:"Charcoal swab: nose, groin, throat (+ any lines present).\n+ Urine if catheterised. + Sputum if expectorating."},
+{q:"CPE Screen — swabs and sites?",a:"Charcoal swab: rectal/perianal (+ skin lesions/wounds if present).\n+ Urine if catheterised."},
+{q:"BAL — which container?",a:"Sterile Universal container → Microbiology"},
+{q:"Legionella antigen — which container?",a:"Sterile Universal container → Microbiology"},
+{q:"Key rule for ALL microbiology samples?",a:"Always include correct patient details and clear information on the form.\n32% of rejections = incorrect patient details.\n25% of rejections = wrong container.\nLabel containers sequentially where required (e.g. CSF)."}
+]},
+
+// ─────────────────────────────────────────────────────
+//  SCI BEST PRACTICE GUIDE
+// ─────────────────────────────────────────────────────
+"SCI: Think & Assessment":{doc:"sci",color:{bg:"#004D5E",accent:"#4DD0E1"},cards:[
+{q:"What does the 'SPINAL CORD' mnemonic stand for?",a:"S=Stability | P=Protection | I=Insufficiency | N=Nutrition | A=Assessment | L=Location | C=Cardiovascular | O=Observations | R=Respiratory | D=Dependency",diagram:"spinalMnemonic"},
+{q:"SCI THINK: Cervical Spine — what must you consider?",a:"Respiratory status?\nWeak cough?\nRespiratory dependency?\nCVS instability?"},
+{q:"SCI THINK: Thoracic Spine — what must you consider?",a:"Respiratory status?\nEffective cough?\nCVS instability?\nPain?\nChest Trauma?"},
+{q:"SCI THINK: Lumbo-Sacral Spine — what must you consider?",a:"Bladder function?\nBowel function?"},
+{q:"Spinal cord levels — Cervical?",a:"C1-C3: Neck muscles\nC4: Diaphragm\nC5: Deltoid (shoulder)\nC6: Wrist\nC7: Triceps\nC7-C8: Fingers",diagram:"spinalLevels"},
+{q:"Spinal cord levels — Thoracic?",a:"T1: Hand\nT2-T12: Intercostals (trunk)\nT7-L1: Abdominals\nT11-L2: Ejaculation",diagram:"spinalLevels"},
+{q:"Spinal cord levels — Lumbar and Sacral?",a:"L2: Hips | L3: Quadriceps | L4-L5: Hamstrings/Knee | L4-S1: Foot\nS2: Penile erection | S2-S3: Bowel and bladder",diagram:"spinalLevels"},
+{q:"ASIA assessment — when must it be completed?",a:"Ideally within 72 hours of initial injury.\nPre and post any spinal surgery.\nRepeat at appropriate intervals for incomplete SCI.\nBased on sensation at multiple body points AND motor function tests.",diagram:"asiaScale"},
+{q:"ASIA Grade A — what does it mean?",a:"Complete.\nNo sensory or motor function preserved in sacral segments S4-5.",diagram:"asiaScale"},
+{q:"ASIA Grade B — what does it mean?",a:"Sensory Incomplete.\nSensory but NOT motor function preserved below the neurological level, including sacral S4-5.\nNo motor function more than 3 levels below motor level on either side.",diagram:"asiaScale"},
+{q:"ASIA Grade C — what does it mean?",a:"Motor Incomplete.\nMotor function preserved at most caudal sacral segments.\nLess than half of key muscle functions below single NLI have grade ≥ 3.",diagram:"asiaScale"},
+{q:"ASIA Grade D — what does it mean?",a:"Motor Incomplete.\nMotor function preserved.\nAt least half of key muscle functions below single NLI have grade ≥ 3.",diagram:"asiaScale"},
+{q:"ASIA Grade E — what does it mean?",a:"Normal.\nSensation and motor function normal in all segments.\nOnly used in follow-up if individual had prior SCI deficits.",diagram:"asiaScale"},
+{q:"ASIA Muscle Function Grading — what do grades 0-5 mean?",a:"0 = Total paralysis\n1 = Palpable or visible contraction\n2 = Active movement, full ROM with gravity eliminated\n3 = Active movement, full ROM against gravity\n4 = Active movement against moderate resistance\n5 = Normal — full ROM, full resistance"},
+{q:"ASIA Sensory Grading?",a:"0 = Absent\n1 = Altered (decreased/impaired or hypersensitivity)\n2 = Normal\nNT = Not testable"},
+{q:"Frankel Grade — what do grades A-E mean?",a:"A = Complete loss of motor AND sensory function\nB = Incomplete — preserved sensation only\nC = Incomplete — preserved motor (non-functional)\nD = Incomplete — preserved motor (functional)\nE = Complete return of all motor and sensory function (may have abnormal reflexes)",diagram:"frankelGrade"},
+{q:"How do you determine if SCI is Complete or Incomplete?",a:"If voluntary anal contraction = No\nAND all S4-5 sensory scores = 0\nAND deep anal pressure = No\n→ COMPLETE.\nOtherwise → INCOMPLETE."},
+{q:"What is the Neurological Level of Injury (NLI)?",a:"The most caudal segment of the cord with intact sensation AND normal motor function rostrally.\nIt is the most cephalad of the sensory and motor levels."}
+]},
+"SCI: Referral & SCIC Transfer":{doc:"sci",color:{bg:"#4A1D6E",accent:"#CE93D8"},cards:[
+{q:"Within how many hours must you contact the SCIC after diagnosing SCI?",a:"Within 4 hours of diagnosis.\nDoctor to Doctor discussion with SCIC around injury interpretation and management including potential surgical options.\nMust be documented in medical notes."},
+{q:"SCIC contact numbers — Midlands region?",a:"Oswestry: 01691 404000\n(Wrekin Ward advice: 01691 404406)\nSouthport: 01704 547471 (ask for Spinal Consultant on Call)\nUHCW / Northamptonshire / Kettering patients:\nStoke Mandeville: 01296 315000"},
+{q:"National SCI Database — when and where?",a:"Enter all necessary information within 24 hours of diagnosis.\nWebsite: nww.mdsas.nhs.uk"},
+{q:"When should an outreach visit from SCIC take place?",a:"Within 5 working days if the patient is not likely to be admitted to the SCIC within 7 days of database referral.\nVisits done by Consultant Nurse or Outreach Coordinator."},
+{q:"What is the role of the SCIC outreach team?",a:"• Assess patient prior to SCIC admission\n• Support staff with patient care and provide expert training\n• Ensure patient understands their injury and rehabilitation pathway\n• Meet with family/carers to offer support and advice\n• Document referral sharing and date of acceptance in medical notes"},
+{q:"Oswestry MCSI — criteria for acute admission?",a:"1. All patients with spinal trauma WITH neurological deficit.\n2. Spinal trauma WITHOUT neurological deficit but with unstable spine the admitting hospital cannot manage.\n3. Spinal paralysis of non-traumatic, non-progressive nature."},
+{q:"Oswestry — tracheostomy transfer requirements?",a:"Patient must be downsized to maximum size 6 uncuffed tube before transfer.\nAND stable with this for minimum 5 days.\nFor decannulation: must be decannulated, clinically well, CXR + ABGs + full blood set completed."},
+{q:"Stoke Mandeville — non-acceptance criteria?",a:"• Intact neurology with spinal column injury\n• Progressive disease\n• Life limited (<1yr)\n• Severe cognitive/behavioural impairment\n• Severe self-harm risk\n• Severe co-morbidities limiting rehabilitation\n• Behavioural issues non-compliant with treatment"},
+{q:"Southport — who is accepted?",a:"New SCI or Cauda Equina Syndrome from trauma or non-traumatic cause — must be non-progressive.\nExcluded: progressive/congenital neurological conditions, supraspinal aetiology, significant mental health issues/brain injuries, ongoing renal support needs."},
+{q:"What information does the SCIC referral checklist include?",a:"Referring doctor / consultant / hospital | Mechanism of injury | Level of fracture | Time of injury | Frankel Grade | GCS and pupils on arrival | Neurological assessment (last normal segment, myotome, dermatome, bulbocavernosus reflex) | Digital rectal examination | Current vital signs | Other injuries | Drug history | Anticoagulant status | Outcome of call"}
+]},
+"SCI: Core Care Protocols":{doc:"sci",color:{bg:"#2E5902",accent:"#AED581"},cards:[
+{q:"Spinal clearance — who can authorize it?",a:"• Consultant Spinal Surgeon\n• Consultant Intensivist\n• Consultant Orthopaedic or Neurosurgeon\n• Consultant Trauma Team Leader\n• Consultant Emergency Physician\nMust be documented in patient notes. No exceptions under ANY circumstances."},
+{q:"Which cervical spinal clearance guidelines are followed?",a:"UHCW: NICE guidelines + Canadian C-Spine Rule\nUHNM: Canadian C-Spine Rule\nUHB: Canadian C-Spine Rule"},
+{q:"Moving and handling — how soon must patient leave the spinal board in ED?",a:"Within 20 minutes of arrival at the Emergency Department, or as soon as possible."},
+{q:"What mattress should SCI patients be placed on?",a:"Spinal bed or firm/foam mattress.\nDynamic/Airflow mattresses must NOT be used without prior consultation with a spinal surgeon or SCIC."},
+{q:"Log roll regime — when to establish and how often?",a:"Within 3 hours of admission. 2-3 hourly spinal log roll turns.\nMaximum 3 hours in side-lying/running man position (or as long as patient tolerates, whichever is shorter).\nUse analgesia to promote side-lying position."},
+{q:"Correct bed position for SCI patients?",a:"Flat/horizontal bed.\nWhole bed tilt FEET DOWN maximum 15-30° (if needed for medical management).\nIn supine: elevate feet to 90° resting position using pillows. Do not force."},
+{q:"Tetraplegic patients — arm positioning?",a:"Shoulders abducted. Alternate arms raised at each turn.\nAim for 90° abduction with lateral rotation.\nHands positioned on small pillows."},
+{q:"GI management — why is the patient kept NBM?",a:"Risk of mucosal ulceration due to vagal overactivity (high lesion).\nRisk of abdominal distension causing diaphragm splinting.\nTransient paralytic ileus — gut peristalsis must be nurtured or patient may aspirate."},
+{q:"GI management — NBM duration and when to start feeding?",a:"NBM for at least 48 hours.\nLight diet/enteral/parenteral feeding introduced gradually when bowel sounds present.\nDietician referral within 72 hours."},
+{q:"Bowel management — what must be performed in ED?",a:"Digital rectal examination by attending clinician.\nRecord: anal sphincter status AND presence of bulbocavernosus reflex.\nBowel regime must be instigated on admission."},
+{q:"Bladder management — catheter on admission?",a:"Size 12-16 gauge catheter on admission.\nMaintain on free drainage.\nChanges to ongoing management discussed with SCIC.\nNo exceptions unless on SCIC advice."},
+{q:"DVT protection — TED stockings?",a:"All SCI patients: properly sized TEDs unless leg damage precludes.\nRemove completely once per shift to check skin integrity.\nDo NOT apply if: lower limb fixators, wounds, pressure ulcers, arterial disease or dermatological conditions."},
+{q:"DVT protection — pharmacological anticoagulation?",a:"Commence when advised by managing clinician — preferably within 48 hours.\nDiscuss on daily ward rounds.\nMust be prescribed at spinal surgeon's directive. Do not use if contraindicated."},
+{q:"DVT — other measures?",a:"Foot pumps or compression boots — monitor pressure effect on skin.\nPhysiotherapist: assessment of joint range and passive/active assisted movements.\nRemove cannulae as soon as no longer clinically indicated."},
+{q:"Tissue viability — initial assessment?",a:"Waterlow / Medley score on admission.\nInitiate 2-3 hourly 3-way turning regime.\nRed marks are significant — palpate for hardness, keep pressure-free until no longer visible or palpable."},
+{q:"Tissue viability — what to do when pressure damage is noted?",a:"Contact Tissue Viability Service immediately.\nDocument in case notes.\nGrade 2+ pressure ulcers: measure and photograph initially, then weekly.\nAct immediately to relieve pressure on damaged area."},
+{q:"Tissue viability — splints and casts?",a:"If splints/plaster casts/orthoses are used: observe relevant pressure areas for signs of tissue damage at least 3 times daily.\nObtain advice from orthotist or therapist."},
+{q:"Surface-to-surface transfers — what method?",a:"Spinal board with accompanying secure head device,\nscoop stretcher, or vacuum mattress with pat slide.\nMaintain spinal column alignment throughout ALL turns, procedures and transfers."}
+]},
+"SCI: CVS, Respiratory & Autonomic Dysreflexia":{doc:"sci",color:{bg:"#5D1A2A",accent:"#F48FB1"},cards:[
+{q:"Autonomic Dysreflexia — causes, signs, treatment?",a:"See diagram below — life-threatening, treat immediately.",diagram:"autoDysreflexia"},
+{q:"Which SCI lesion levels are at risk of bradycardia and hypotension?",a:"All cervical and upper thoracic (above T6/7).\nLoss of baroreceptor reflex and basal sympathetic tone.\nCardiac sympathetic innervation: T2-T4/5.\nLog rolling or repositioning may also cause vaso-vagal stimulation."},
+{q:"CVS management — Glycopyrolate prescription?",a:"Prescription for Glycopyrolate must be documented on drug chart.\nFor use if: cardiac syncope OR heart rate drops below 35 bpm.\nConsider enhanced level care bed for close/continuous monitoring."},
+{q:"SCI temperature regulation — key considerations?",a:"SCI patients cannot internally regulate body temperature.\nActual body temperature can be 1° below normal.\nUse warming/cooling devices cautiously.\nInsulate patient or distance paralysed areas from heat/cold sources."},
+{q:"IV fluids in SCI — how should they be managed?",a:"Administer cautiously to prevent fluid overload.\nUnder advice of attending clinician.\nIf unsure: obtain advice from Spinal Consultant/Registrar."},
+{q:"Respiratory positioning — tetraplegic patients?",a:"Flat/supine position — respiratory mechanics maximised in supine for spontaneously breathing tetraplegic patient.\nBed tilt maximum 15-30° head-up ONLY if needed after MDT discussion."},
+{q:"Respiratory monitoring — what parameters?",a:"Vital capacity | Oxygen saturation | Signs of hypercapnia | Hypoxia | Respiratory rate and pattern.\nMonitor closely for respiratory fatigue or distress."},
+{q:"Respiratory management — physiotherapy role?",a:"Refer to physiotherapist for individualised prophylaxis regime:\n• Assisted cough with NIPPY\n• Incentive spirometry\n• Non-invasive ventilation\nAdvice on turning and positioning to maximise V/Q.\nSecretion clearance advice from linked SCIC."},
+{q:"Respiratory ventilation in SCI?",a:"Ventilate to normal blood gas parameters unless chronic underlying lung morbidity.\nProvide humidified supplemental O2 in acute phase to keep cord oxygenated.\nException: Head injury, increased ICP."},
+{q:"What is Autonomic Dysreflexia (AD)?",a:"A life-threatening hypertensive response to noxious stimuli below the level of injury.\nOccurs after the spinal shock phase has passed.\nMost common in injuries at T6 or above (neurological level)."},
+{q:"Which patients are at risk of Autonomic Dysreflexia?",a:"Patients with spinal cord lesions at T6 or above.\nAssess for: level of completeness, time since injury, previous symptoms."},
+{q:"Signs and symptoms of Autonomic Dysreflexia?",a:"• Hypertension (BP 20-30 mmHg above normal)\n• Bradycardia\n• Flushed face and upper extremities\n• Stuffy nose\n• Pounding headache\n• Sweating above injury level\n• Tight chest / blurred vision"},
+{q:"Common causes / triggers of Autonomic Dysreflexia?",a:"Bladder: blocked/kinked catheter, UTI, bladder stones\nBowel: constipation, impacted bowel, having bowel care performed\nSkin: pressure ulcer, tight clothing, ingrown toenail, blister/burn\nOther: scrotal compression, sexual stimulation, labour/childbirth"},
+{q:"Autonomic Dysreflexia — first action?",a:"Perform whole bed tilt (head up) or sit patient up — on direction of medical clinician.\nIdentify and resolve the noxious stimulus immediately."},
+{q:"Autonomic Dysreflexia — treatment?",a:"Inform attending medical clinician.\nTreatment: GTN spray/tablets OR Nifedipine 10mg ('bite and swallow' method).\nThese should be prescribed in PRN section on admission or when patient is through spinal shock."},
+{q:"Autonomic Dysreflexia — ongoing management?",a:"Monitor cardiovascular signs continuously for resolution.\nMaintain heightened awareness for repeat attacks.\nConsider enhanced care level bed if stimulus takes time to resolve.\nDocument each episode in the patient's case notes."},
+{q:"Autonomic Dysreflexia — common first causes to exclude?",a:"1. Bladder distension (check catheter is not blocked or kinked)\n2. Constipation / bowel impaction\nIf cause unknown and BP not settling: contact GP or Emergency Department."}
+]}
+};
+
+// ═══════════════════════════════════════════
+//  APP STATE & HELPERS
+// ═══════════════════════════════════════════
+var currentCat=null,currentIdx=0,isFlipped=false,completed={},fromSearch=false,lastQuery='';
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function highlight(text,terms){var s=esc(text);terms.forEach(function(t){s=s.replace(new RegExp('('+escRe(t)+')','gi'),'<mark>$1</mark>');});return s;}
+function show(id){var el=document.getElementById(id);if(el)el.style.display='block';}
+function hide(id){var el=document.getElementById(id);if(el)el.style.display='none';}
+
+function buildGrid(){
+  var wrapper=document.getElementById('cat-grid-wrapper');wrapper.innerHTML='';
+  var total=0;
+  var docs={wccc:[],sci:[]};
+  Object.keys(DATA).forEach(function(name){var d=DATA[name];total+=d.cards.length;docs[d.doc||'wccc'].push(name);});
+  document.getElementById('total-badge').textContent=total+' cards total';
+  var docLabels={wccc:'&#9642; WCCC COWS Reference &#8212; Queen Elizabeth Hospital Birmingham',sci:'&#9642; Spinal Cord Injury Best Practice Guide &#8212; Midlands Critical Care &amp; Trauma Networks'};
+  ['wccc','sci'].forEach(function(docId){
+    if(!docs[docId]||!docs[docId].length)return;
+    var div=document.createElement('div');
+    var lbl=document.createElement('div');lbl.className='doc-divider';lbl.innerHTML=docLabels[docId];div.appendChild(lbl);
+    var grid=document.createElement('div');grid.className='cat-grid';grid.style.marginBottom='8px';
+    docs[docId].forEach(function(name){
+      var data=DATA[name];var done=completed[name]?completed[name].size:0;var t=data.cards.length;var pct=Math.round((done/t)*100);
+      var btn=document.createElement('button');btn.className='cat-btn';btn.style.cssText='background:'+data.color.bg+';box-shadow:0 2px 8px rgba(0,0,0,0.25)';
+      btn.innerHTML='<div class="cat-count">'+t+' cards</div><div class="cat-name">'+name+'</div><div class="cpb"><div class="cpf" style="width:'+pct+'%"></div></div><div class="cpt">'+done+'/'+t+' reviewed</div>';
+      btn.onclick=function(){clearSearch();openCategory(name,0,false);};grid.appendChild(btn);
+    });
+    div.appendChild(grid);wrapper.appendChild(div);
+  });
+}
+
+function handleSearch(){
+  var q=document.getElementById('search-input').value.trim();lastQuery=q;
+  document.getElementById('clear-btn').style.display=q?'block':'none';
+  if(!q){clearSearch();return;}
+  hide('cat-view');show('search-results');
+  var terms=q.toLowerCase().split(/\s+/).filter(Boolean);var matches=[];
+  Object.keys(DATA).forEach(function(catName){DATA[catName].cards.forEach(function(card,idx){if(terms.every(function(t){return(card.q+' '+card.a).toLowerCase().includes(t);}))matches.push({catName:catName,idx:idx,card:card,color:DATA[catName].color});});});
+  var hdr=document.getElementById('results-hdr');var list=document.getElementById('results-list');list.innerHTML='';
+  if(!matches.length){hdr.innerHTML='No results for "<strong>'+esc(q)+'</strong>"';list.innerHTML='<div class="no-results"><div class="icon">&#128269;</div>Try a different keyword<br><span style="color:#768692;font-size:13px">e.g. "ASIA", "dysreflexia", "log roll", "ICP", "EVD", "meropenem", "purple top", "SCIC"</span></div>';return;}
+  hdr.innerHTML='<strong>'+matches.length+'</strong> result'+(matches.length!==1?'s':'')+' for "<strong>'+esc(q)+'</strong>"';
+  matches.forEach(function(m){var el=document.createElement('div');el.className='result-item';el.style.borderLeftColor=m.color.accent;var shortA=m.card.a.split('\n')[0];el.innerHTML='<div class="result-cat" style="color:'+m.color.accent+'">'+esc(m.catName)+'</div><div class="result-q">'+highlight(m.card.q,terms)+'</div><div class="result-a">'+highlight(shortA,terms)+(m.card.a.includes('\n')?' &hellip;':'')+'</div>';el.onclick=function(){openCategory(m.catName,m.idx,true);};list.appendChild(el);});
+}
+
+function clearSearch(){document.getElementById('search-input').value='';document.getElementById('clear-btn').style.display='none';hide('search-results');show('cat-view');lastQuery='';}
+
+function openCategory(name,index,arrivedFromSearch){
+  currentCat=name;currentIdx=index||0;isFlipped=false;fromSearch=!!arrivedFromSearch;
+  if(!completed[name])completed[name]=new Set();
+  hide('cat-view');hide('search-results');show('card-view');
+  var col=DATA[name].color;
+  document.getElementById('flashcard').style.borderLeftColor=col.accent;
+  document.getElementById('counter').style.color=col.bg;
+  document.getElementById('btn-mark').style.background=col.bg;
+  document.getElementById('ps-fill').style.background=col.accent;
+  var badge=document.getElementById('cat-badge-txt');badge.style.background=col.bg;badge.textContent=name;
+  var banner=document.getElementById('srch-banner');
+  if(fromSearch&&lastQuery){document.getElementById('banner-txt').textContent='Showing result for "'+lastQuery+'" in '+name;banner.style.display='flex';}
+  else{banner.style.display='none';}
+  renderCard();
+}
+
+function renderCard(){
+  if(!currentCat)return;
+  var cards=DATA[currentCat].cards;var card=cards[currentIdx];var total=cards.length;var isDone=completed[currentCat].has(currentIdx);var col=DATA[currentCat].color;
+  document.getElementById('counter').textContent=(currentIdx+1)+' / '+total;
+  document.getElementById('ps-fill').style.width=(((currentIdx+1)/total)*100)+'%';
+  var fc=document.getElementById('flashcard');
+  fc.className='flashcard'+(isFlipped?' flipped':'')+(isDone?' is-done':'');
+  fc.style.boxShadow=isFlipped?'0 4px 20px rgba(0,0,0,0.15)':'0 2px 8px rgba(0,0,0,0.07)';
+  document.getElementById('card-state-lbl').textContent=isFlipped?'ANSWER':'QUESTION &#8212; tap to reveal';
+  var content=document.getElementById('card-content');
+  if(isFlipped){
+    var ansHtml=esc(card.a).replace(/\n/g,'<br>');
+    var diagHtml=(card.diagram&&DIAGRAMS[card.diagram])?'<div class="diagram-wrap">'+DIAGRAMS[card.diagram]+'</div>':'';
+    content.className='flip-anim';content.innerHTML='<div class="card-answer">'+ansHtml+'</div>'+diagHtml;
+  } else {
+    content.className='flip-anim';content.innerHTML='<div class="card-question">'+esc(card.q)+'</div><div class="tap-hint">Tap anywhere on the card to reveal the answer</div>';
+  }
+  var btnMark=document.getElementById('btn-mark');
+  if(isDone){btnMark.textContent='&#10003; Marked Done';btnMark.classList.add('already');}
+  else{btnMark.textContent='Mark Done';btnMark.classList.remove('already');btnMark.style.background=col.bg;}
+  document.getElementById('btn-prev').disabled=(currentIdx===0);
+  document.getElementById('btn-next').disabled=(currentIdx===total-1);
+  var doneCount=completed[currentCat].size;
+  document.getElementById('summary-strip').innerHTML=doneCount+' of '+total+' cards reviewed'+(doneCount===total?' <span class="all-done" style="color:'+col.bg+'">&#127881; All complete!</span>':'');
+}
+
+function flipCard(){isFlipped=!isFlipped;renderCard();}
+function prevCard(){if(currentIdx>0){isFlipped=false;currentIdx--;renderCard();}}
+function nextCard(){var t=DATA[currentCat].cards.length;if(currentIdx<t-1){isFlipped=false;currentIdx++;renderCard();}}
+function markDone(){completed[currentCat].add(currentIdx);var t=DATA[currentCat].cards.length;if(currentIdx<t-1)nextCard();else renderCard();}
+function resetCategory(){completed[currentCat]=new Set();currentIdx=0;isFlipped=false;renderCard();}
+function goBack(){currentCat=null;isFlipped=false;hide('card-view');if(fromSearch&&lastQuery){hide('cat-view');show('search-results');document.getElementById('search-input').value=lastQuery;document.getElementById('clear-btn').style.display='block';}else{clearSearch();}buildGrid();}
+function goBackToSearch(){currentCat=null;isFlipped=false;hide('card-view');show('search-results');document.getElementById('search-input').value=lastQuery;document.getElementById('clear-btn').style.display='block';buildGrid();}
+buildGrid();
+</script>
+</body>
+</html>
